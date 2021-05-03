@@ -5,7 +5,7 @@
     android:id="@+id/activity_scan"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:activity="com.yzbkaka.kakamusic.activity.ScanActivity">
+    tools:activity="com.epic.localmusic.activity.ScanActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/scan_music_toolbar"
         android:layout_width="match_parent"

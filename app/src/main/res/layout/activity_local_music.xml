@@ -44,7 +44,7 @@
         android:background="@drawable/shadow_view"
         android:layout_below="@id/local_tab"></View>
 
-    <com.yzbkaka.kakamusic.view.MyViewPager
+    <com.epic.localmusic.view.MyViewPager
         android:id="@+id/local_viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

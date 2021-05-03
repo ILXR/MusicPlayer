@@ -181,7 +181,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:gravity="center_vertical"
-                            android:text="我的喜爱" />
+                            android:text="我的最爱" />
 
                         <TextView
                             android:id="@+id/home_my_love_music_count_tv"

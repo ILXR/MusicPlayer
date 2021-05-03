@@ -13,7 +13,7 @@
 * [ ] 本地音乐播放器
 * [ ] WebSocket通信
 * [ ] 蓝牙通信
-* [ ] 控制音乐：播放、暂停、上一首、下一首
+* [ ] 控制音乐接口：播放、暂停、上一首、下一首
 
 ---
 
@@ -30,13 +30,13 @@
 
 ### 2021/5/3
 
-* [ ] App会和原作者写好的后台通讯，会报错
+* [x] ~~App会和原作者写好的后台通讯，会报错 - 已修复~~
 
 ```Java
 java.net.SocketTimeoutException: failed to connect to guolin.tech/13.70.26.68 (port 80) from /10.202.46.171 (port 43832) after 10000ms
 ```
 
-* [ ] 扫描本地歌曲时，数据库出错
+* [x] ~~扫描本地歌曲时，数据库出错 - 已修复~~
 
 ```Java
 java.lang.NullPointerException: Attempt to invoke virtual method 'int java.lang.String.length()' on a null object reference
@@ -44,6 +44,13 @@ java.lang.NullPointerException: Attempt to invoke virtual method 'int java.lang.
   at com.yzbkaka.kakamusic.activity.ScanActivity$4.run(ScanActivity.java:224)
 ```
 
-* 其他均未测试
+* [ ] 通知栏常驻的控制组件无法交互（点击无效），可能和安卓8.0以上改动有关 - 待修复
+
+```Java
+W/Notification: Use of stream types is deprecated for operations other than volume control
+W/Notification: See the documentation for what to use instead with android.media.AudioAttributes to qualify your playback use case
+```
+
+* ~~修改了包名和部分UI显示，修复了MediaPlayer报错~~
 
 ---

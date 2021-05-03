@@ -4,7 +4,7 @@
     android:id="@+id/activity_model"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yzbkaka.kakamusic.activity.ModelActivity">
+    tools:context="com.epic.localmusic.activity.ModelActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/model_music_toolbar"
         android:layout_width="match_parent"
@@ -47,7 +47,7 @@
         android:scrollbars="vertical"
         android:layout_above="@id/fragment_playbar"
         android:layout_below="@id/model_music_playmode_rl"/>
-    <com.yzbkaka.kakamusic.view.SideBar
+    <com.epic.localmusic.view.SideBar
         android:id="@+id/model_music_siderbar"
         android:layout_width="200dp"
         android:layout_height="match_parent"
