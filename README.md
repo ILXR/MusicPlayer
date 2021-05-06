@@ -2,18 +2,26 @@
 
 ---
 
-## 原项目资料
+## 项目资料
 
-* [README.md](./README.old.md)
+* [原项目文档](./README.old.md)
+* [电子纱线ppt](./data/电子纱线绳音乐器.pptx)
+* [电子纱线论文](./data/E-textile%20Microinteractions%20Augmenting%20Twist%20with.pdf)
 
 ---
 
 ## 总需求
 
-* [ ] 本地音乐播放器
-* [ ] WebSocket通信
-* [ ] 蓝牙通信
-* [ ] 控制音乐接口：播放、暂停、上一首、下一首
+* 本地音乐播放器
+* WebSocket通信
+* 蓝牙通信
+* 控制音乐接口
+  * 状态：播放、暂停
+  * 切歌：上一首、下一首
+  * 音量：增加、减小
+  * 列表：随机播放、单曲循环、顺序播放
+
+![Task](./data/Task_2021-05-06.png)
 
 ---
 
