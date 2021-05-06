@@ -46,7 +46,7 @@ public class AboutActivity extends BaseActivity{
         startLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openUrl("https://github.com/yzbkaka/kakaMusic");
+                openUrl("https://github.com/ILXR/MusicPlayer");
             }
         });
     }

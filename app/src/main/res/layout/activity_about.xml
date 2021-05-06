@@ -59,7 +59,7 @@
                 android:gravity="center_vertical|top"
                 android:paddingLeft="20dp"
                 android:paddingTop="3dp"
-                android:text="yzbkaka@foxmail.com" />
+                android:text="gyc8787@163.com" />
         </LinearLayout>
         <View
             android:layout_width="match_parent"
@@ -84,7 +84,7 @@
                 android:gravity="center_vertical|top"
                 android:paddingLeft="20dp"
                 android:paddingTop="3dp"
-                android:text="https://github.com/yzbkaka" />
+                android:text="https://github.com/ILXR/MusicPlayer" />
         </LinearLayout>
 
 

@@ -2,6 +2,7 @@ package com.epic.localmusic.fragment;
 
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -42,11 +44,13 @@ import static com.epic.localmusic.receiver.PlayerManagerReceiver.status;
  */
 public class PlayBarFragment extends Fragment {
 
-    public static final String ACTION_UPDATE_UI_PlAYBAR = "com.lijunyan.blackmusic.fragment.PlayBarFragment:action_update_ui_broad_cast";
+    private static final String TAG = "PlayBarFragment";
 
-    public static final String REMOTE_CANCEL_BROADCAST = "com.yzbkaka.kakamusic.remote_cancel";
+    public static final String ACTION_UPDATE_UI_PlAYBAR = "com.epic.localmusic.fragment.PlayBarFragment:action_update_ui_broad_cast";
 
-    public static final String REMOTE_NEXT_BROADCAST = "com,yzbkaka,kakamusic,remote_next";
+    public static final String REMOTE_CANCEL_BROADCAST = "com.epic.localmusic.remote_cancel";
+
+    public static final String REMOTE_NEXT_BROADCAST = "com.epic.localmusic.remote_next";
 
     public static final String REMOTE = "remote";
 
@@ -87,6 +91,8 @@ public class PlayBarFragment extends Fragment {
     private NotificationManager notificationManager;
 
     private Notification notification;
+
+    private NotificationCompat.Builder builder;
 
     private RemoteCancelReceiver remoteCancelReceiver;
 
@@ -229,12 +235,22 @@ public class PlayBarFragment extends Fragment {
         remoteViews.setOnClickPendingIntent(R.id.remote_next_iv,nextPendingIntent);
         remoteViews.setOnClickPendingIntent(R.id.remote_cancel,cancelPendingIntent);
 
-        notification = new NotificationCompat.Builder(context)
+        notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        // Android 8.0 适配
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            String channelID = "1";
+            String channelName = "PlayBarFragment";
+            NotificationChannel channel = new NotificationChannel(channelID,channelName, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
+            builder = new NotificationCompat.Builder(context,channelID);
+        }else{
+            builder = new NotificationCompat.Builder(context,null);
+        }
+        notification = builder
                 .setSmallIcon(R.drawable.add)
                 .setOngoing(true)
                 .setContent(remoteViews)
                 .build();
-        notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1,notification);
     }
 
@@ -369,7 +385,7 @@ public class PlayBarFragment extends Fragment {
             status = intent.getIntExtra(Constant.STATUS,0);
             current = intent.getIntExtra(Constant.KEY_CURRENT,0);
             duration = intent.getIntExtra(Constant.KEY_DURATION,100);
-            Log.d("status", String.valueOf(status));
+            Log.d(TAG+" - status", String.valueOf(status));
             switch (status){  //根据回调过来的状态来设置View
                 case Constant.STATUS_STOP:
                     playImage.setSelected(false);
@@ -407,6 +423,7 @@ public class PlayBarFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e("RemoteCancelReceiver", "onReceive: ");
             notificationManager.cancel(1);  //消失
         }
     }
@@ -419,6 +436,7 @@ public class PlayBarFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e("RemoteNextReceiver", "onReceive: ");
             MyMusicUtil.playNextMusic(getActivity());
         }
     }

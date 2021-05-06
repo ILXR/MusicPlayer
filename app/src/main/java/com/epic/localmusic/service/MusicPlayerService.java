@@ -14,7 +14,7 @@ import com.epic.localmusic.receiver.PlayerManagerReceiver;
  */
 public class MusicPlayerService extends Service {
 
-    public static final String PLAYER_MANAGER_ACTION = "com.lijunyan.blackmusic.service.MusicPlayerService.player.action";
+    public static final String PLAYER_MANAGER_ACTION = "com.epic.localmusic.service.MusicPlayerService.player.action";
 
     private PlayerManagerReceiver mReceiver;
 

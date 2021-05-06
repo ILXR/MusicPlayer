@@ -54,28 +54,28 @@ public class WelcomeActivity extends BaseActivity {
 
 
     private void loadBingPic(){
-        HttpUtil.sendOkHttpRequest(HttpUtil.requestBingPic, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    final String bingPic = response.body().string();
-                    MyMusicUtil.setBingSharedPreference(bingPic);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Glide.with(MyApplication.getContext()).load(bingPic).into(bingImage);
-                        }
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
+        // HttpUtil.sendOkHttpRequest(HttpUtil.requestBingPic, new Callback() {
+        //     @Override
+        //     public void onResponse(Call call, Response response) throws IOException {
+        //         try {
+        //             final String bingPic = response.body().string();
+        //             MyMusicUtil.setBingSharedPreference(bingPic);
+        //             runOnUiThread(new Runnable() {
+        //                 @Override
+        //                 public void run() {
+        //                     Glide.with(MyApplication.getContext()).load(bingPic).into(bingImage);
+        //                 }
+        //             });
+        //         }catch (Exception e){
+        //             e.printStackTrace();
+        //         }
+        //     }
 
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-        });
+        //     @Override
+        //     public void onFailure(Call call, IOException e) {
+        //         e.printStackTrace();
+        //     }
+        // });
     }
 
 

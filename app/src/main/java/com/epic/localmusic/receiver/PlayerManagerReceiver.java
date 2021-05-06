@@ -18,7 +18,7 @@ import java.io.File;
 
 public class PlayerManagerReceiver extends BroadcastReceiver {
 
-    public static final String ACTION_UPDATE_UI_ADAPTER = "com.lijunyan.blackmusic.receiver.PlayerManagerReceiver:action_update_ui_adapter_broad_cast";
+    public static final String ACTION_UPDATE_UI_ADAPTER = "com.epic.localmusic.receiver.PlayerManagerReceiver:action_update_ui_adapter_broad_cast";
 
     private MediaPlayer mediaPlayer;
 
