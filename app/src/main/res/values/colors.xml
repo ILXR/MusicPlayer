@@ -14,6 +14,12 @@
     <color name="colorGreen">#00ff00</color>
     <color name="colorBlue">#0000ff</color>
 
+    <color name="orange">#ff9500</color>
+    <color name="blue">#40b3ff</color>
+    <color name="green">#45cf13</color>
+    <color name="red">#f52727</color>
+    <color name="white">#ffffff</color>
+
     <color name="grey50">#fffafafa</color>
     <color name="grey200">#ffeeeeee</color>
     <color name="grey500">#ff9e9e9e</color>

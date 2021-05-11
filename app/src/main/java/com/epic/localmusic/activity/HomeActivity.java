@@ -143,6 +143,10 @@ public class HomeActivity extends PlayBarBaseActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 drawerLayout.closeDrawers();
                 switch (item.getItemId()){
+                    case R.id.nav_bluetooth: // 蓝牙设备
+                        Intent intentBlueTooth = new Intent(HomeActivity.this,BlueToothActivity.class);
+                        startActivity(intentBlueTooth);
+                        break;
                     case R.id.nav_theme:  //主题中心
                         isStartTheme = true;
                         Intent intentTheme = new Intent(HomeActivity.this,ThemeActivity.class);

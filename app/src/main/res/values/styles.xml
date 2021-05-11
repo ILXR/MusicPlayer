@@ -19,6 +19,12 @@
         <item name="android:windowSoftInputMode">adjustPan|stateHidden</item>
     </style>
 
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.DarkActionBar" type="text/css">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
 
     <style name="BiLiPinkTheme" parent="AppTheme">
         <item name="colorPrimary">@color/biliPink</item>

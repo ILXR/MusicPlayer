@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -31,6 +35,12 @@
             android:name="com.epic.localmusic.activity.HomeActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".activity.BlueToothActivity"
+            android:label="蓝牙设备"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.AppTheme"/>
 
         <activity
             android:name="com.epic.localmusic.activity.ScanActivity"
@@ -74,6 +84,7 @@
             android:name="com.epic.localmusic.activity.ModelActivity"
             android:launchMode="standard"
             android:screenOrientation="portrait" />
+
 
         <activity
             android:name="com.epic.localmusic.activity.ThemeActivity"

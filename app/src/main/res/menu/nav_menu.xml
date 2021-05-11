@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_bluetooth"
+            android:icon="@drawable/bluetooth"
+            android:title="蓝牙设备" />
+        <item
             android:id="@+id/nav_theme"
             android:icon="@drawable/nav_theme"
             android:title="主题中心" />
