@@ -8,6 +8,15 @@ public class Constant {
 	public static final String SERVICE_NAME = "com.example.vinyl.service.MediaPlayerService";//服务的名称为包名+类名
 	//播放状态
 	public static final String STATUS = "status";
+	//public static final String WebSocketUrl = "ws://222.20.79.254";
+	public static final String WebSocketUrl ="ws://192.168.137.1:5678";
+	public static enum ConnectStatus {
+		Connecting, // the initial state of each web socket.
+		Open, // the web socket has been accepted by the remote peer
+		Closing, // one of the peers on the web socket has initiated a graceful shutdown
+		Closed, //  the web socket has transmitted all of its messages and has received all messages from the peer
+		Canceled // the web socket connection failed
+	}
 
 	public static final int STATUS_STOP = 0; //停止状态
 	public static final int STATUS_PLAY = 1; //播放状态

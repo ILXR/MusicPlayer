@@ -4,11 +4,14 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatDelegate;
+import android.util.Log;
 
+import com.epic.localmusic.WebSocket.WebSocketHandler;
 import com.epic.localmusic.service.MusicPlayerService;
 
 
 public class MyApplication extends Application{
+    private static final String TAG = "MyApplication";
 
     private static Context context;
 
@@ -20,6 +23,7 @@ public class MyApplication extends Application{
         Intent startIntent = new Intent(MyApplication.this,MusicPlayerService.class);
         startService(startIntent);
         initNightMode();
+        WebSocketHandler.getInstance().testConnect();
     }
 
 
