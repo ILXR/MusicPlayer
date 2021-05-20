@@ -12,10 +12,10 @@
 
 ## 总需求
 
-* 本地音乐播放器
-* WebSocket通信
-* 蓝牙通信
-* 控制音乐接口
+* 本地音乐播放器 (80%)
+* WebSocket通信 (80%)
+* 蓝牙通信 (50%)
+* 控制音乐接口 (0%)
   * 状态：播放、暂停
   * 切歌：上一首、下一首
   * 音量：增加、减小
@@ -27,12 +27,21 @@
 
 ## 参考资料
 
-* WebSocket -> [Here](https://www.jianshu.com/p/7b919910c892)
+* ~~Java WebSocket~~ -> [Here](https://www.jianshu.com/p/7b919910c892)
 * WebSocket 在线测试 -> [Here](http://www.websocket-test.com/)
+* OkHttp WebSocket -> [Here1](http://www.voycn.com/article/android-appruhejiezhuokhttpshiyongwebsocketshixianyufuwuqishishishuangxiangtongxinshier) \ [Here2](https://blog.csdn.net/kris_fei/article/details/80286968)
 
 ---
 
 ## 工作记录
+
+---
+
+### 2021/5/20
+
+* [x] ~~~添加WebSocket通信框架，依赖Okhttp 4.9.0，实现细节封装在WebSocketHandler类中，目前只是测试用，还未设置服务器地址~~~
+* [x] _因为导入Okhttp 最新版本后（旧版本没有WebSocket）有一些AS和Gradle版本不匹配导致的错误，所以升级gradle到6.5，插件到4.1.3，重新导入的话还是比较麻烦的，emmmmm_
+* [ ] __蓝牙通讯有待改进，目前只有测试界面，正式应用应该封装好，并且实现数据交互与转发__
 
 ---
 
