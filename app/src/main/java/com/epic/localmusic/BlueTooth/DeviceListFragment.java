@@ -1,19 +1,16 @@
-package com.epic.localmusic.fragment;
+package com.epic.localmusic.BlueTooth;
 
-import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,10 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.epic.localmusic.R;
-import com.epic.localmusic.Thread.ClientThread;
-import com.epic.localmusic.Thread.ServerThread;
-import com.epic.localmusic.activity.BlueToothActivity;
-import com.epic.localmusic.util.Params;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,31 +51,22 @@ public class DeviceListFragment extends Fragment {
 
     BlueToothActivity mainActivity;
     Handler           uiHandler;
+    Activity          mContext;
 
     ClientThread clientThread;
     ServerThread serverThread;
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
-        switch (requestCode) {
-            case Params.MY_PERMISSION_REQUEST_CONSTANT: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 运行时权限已授权
-                }
-                return;
-            }
-        }
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mContext = getActivity();
 
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
-            Log.e(TAG, "--------------- 不支持蓝牙");
-            getActivity().finish();
+            Toast.makeText(mContext, "您的设备未找到蓝牙驱动！", Toast.LENGTH_SHORT).show();
+            mContext.finish();
         }
     }
 
@@ -98,25 +82,27 @@ public class DeviceListFragment extends Fragment {
         listAdapter = new MyListAdapter();
         listView.setAdapter(listAdapter);
         listAdapter.notifyDataSetChanged();
-
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mainActivity = (BlueToothActivity) getActivity();
-        uiHandler = mainActivity.getUiHandler();
-
+        if (mainActivity != null) {
+            uiHandler = mainActivity.getUiHandler();
+        }
+        // 蓝牙总管理器
+        BlueToothManager.getInstance().setHandler(uiHandler);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        sendConnectedDevice(BlueToothManager.getInstance().getDevice());
 
         // 蓝牙未打开，询问打开
         if (!bluetoothAdapter.isEnabled()) {
-            Intent turnOnBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(turnOnBtIntent, Params.REQUEST_ENABLE_BT);
+            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), Params.REQUEST_ENABLE_BT);
         }
 
         intentFilter = new IntentFilter();
@@ -124,50 +110,44 @@ public class DeviceListFragment extends Fragment {
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-        getActivity().registerReceiver(btReceiver, intentFilter);
+        if (mContext != null) {
+            mContext.registerReceiver(btReceiver, intentFilter);
+        }
 
         // 蓝牙已开启
         if (bluetoothAdapter.isEnabled()) {
             showBondDevice();
-            // 默认开启服务线程监听
-            if (serverThread != null) {
-                serverThread.cancel();
-            }
-            Log.e(TAG, "-------------- new server thread");
-            serverThread = new ServerThread(bluetoothAdapter, uiHandler);
-            new Thread(serverThread).start();
         }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // 关闭服务器监听
-                if (serverThread != null) {
-                    serverThread.cancel();
-                    serverThread=null;
-                    Log.e(TAG , "---------------client item click , cancel server thread ," +
-                            "server thread is null");
-                }
                 BluetoothDevice device = deviceList.get(position);
-                // 开启客户端线程，连接点击的远程设备
-                clientThread = new ClientThread(bluetoothAdapter, device, uiHandler);
-                new Thread(clientThread).start();
-
-                // 通知 ui 连接的服务器端设备
-                Message message = new Message();
-                message.what = Params.MSG_CONNECT_TO_SERVER;
-                message.obj = device;
-                uiHandler.sendMessage(message);
-
+                BlueToothManager.getInstance().connect(device);
+                sendConnectedDevice(device);
             }
         });
+    }
+
+    private void sendConnectedDevice(BluetoothDevice device){
+        // 通知 ui 连接的服务器端设备
+        if(uiHandler!=null && device!=null){
+            Message message = new Message();
+            message.what = Params.MSG_CONNECT_TO_SERVER;
+            message.obj = device;
+            uiHandler.sendMessage(message);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getActivity().unregisterReceiver(btReceiver);
+        if (mContext != null) {
+            mContext.unregisterReceiver(btReceiver);
+        }
+        BlueToothManager.getInstance().resetHandler();
     }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -186,18 +166,17 @@ public class DeviceListFragment extends Fragment {
                 if (bluetoothAdapter.isDiscovering()) {
                     bluetoothAdapter.cancelDiscovery();
                 }
-                if (Build.VERSION.SDK_INT >= 6.0) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            Params.MY_PERMISSION_REQUEST_CONSTANT);
-                }
-
+                //if (Build.VERSION.SDK_INT >= 6.0) {
+                //    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                //            Params.MY_PERMISSION_REQUEST_CONSTANT);
+                //}
                 bluetoothAdapter.startDiscovery();
                 break;
             case R.id.disconnect:
-                bluetoothAdapter.disable();
-                deviceList.clear();
+                BlueToothManager.getInstance().disconnect();
+                showBondDevice();
                 listAdapter.notifyDataSetChanged();
-                toast("蓝牙已关闭");
+                toast("蓝牙连接已关闭");
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -251,21 +230,7 @@ public class DeviceListFragment extends Fragment {
      * @param dataSend
      */
     public void writeData(String dataSend) {
-//        Message message =new Message();
-//        message.obj = dataSend;
-//        if (serverThread!=null){
-//            message.what=Params.MSG_SERVER_WRITE_NEW;
-//            serverThread.writeHandler.sendMessage(message);
-//        }
-//        if (clientThread!=null){
-//            message.what=Params.MSG_CLIENT_WRITE_NEW;
-//            clientThread.writeHandler.sendMessage(message);
-//        }
-        if (serverThread != null) {
-            serverThread.write(dataSend);
-        } else if (clientThread != null) {
-            clientThread.write(dataSend);
-        }
+        BlueToothManager.getInstance().send(dataSend);
     }
 
 
@@ -363,15 +328,16 @@ public class DeviceListFragment extends Fragment {
 
     /**
      * 判断搜索的设备是新蓝牙设备，且不重复
+     *
      * @param device
      * @return
      */
-    private boolean isNewDevice(BluetoothDevice device){
+    private boolean isNewDevice(BluetoothDevice device) {
         boolean repeatFlag = false;
         for (BluetoothDevice d :
                 deviceList) {
-            if (d.getAddress().equals(device.getAddress())){
-                repeatFlag=true;
+            if (d.getAddress().equals(device.getAddress())) {
+                repeatFlag = true;
             }
         }
         //不是已绑定状态，且列表中不重复

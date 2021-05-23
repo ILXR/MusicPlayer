@@ -36,7 +36,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.BlueToothActivity"
+        <activity android:name=".BlueTooth.BlueToothActivity"
             android:label="蓝牙设备"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

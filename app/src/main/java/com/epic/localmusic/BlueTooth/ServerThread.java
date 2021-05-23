@@ -1,4 +1,4 @@
-package com.epic.localmusic.Thread;
+package com.epic.localmusic.BlueTooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,8 +7,6 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
-import com.epic.localmusic.util.Params;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +23,7 @@ public class ServerThread implements Runnable {
     final String TAG = "ServerThread";
 
     BluetoothAdapter      bluetoothAdapter;
-    BluetoothServerSocket serverSocket =null;
+    BluetoothServerSocket serverSocket = null;
     BluetoothSocket       socket       = null;
     Handler               uiHandler;
     Handler               writeHandler;
@@ -93,24 +91,24 @@ public class ServerThread implements Runnable {
                             }
                         }
                     }).start();
-//                    Looper.prepare();
-//                    writeHandler = new Handler() {
-//                        @Override
-//                        public void handleMessage(Message msg) {
-//                            switch (msg.what) {
-//                                case Params.MSG_SERVER_WRITE_NEW:
-//                                    String data = msg.obj.toString() + "\n";
-//                                    try {
-//                                        out.write(data.getBytes("utf-8"));
-//                                        Log.e(TAG, "-------------server write data " + data);
-//                                    } catch (IOException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                    break;
-//                            }
-//                        }
-//                    };
-//                    Looper.loop();
+                    //                    Looper.prepare();
+                    //                    writeHandler = new Handler() {
+                    //                        @Override
+                    //                        public void handleMessage(Message msg) {
+                    //                            switch (msg.what) {
+                    //                                case Params.MSG_SERVER_WRITE_NEW:
+                    //                                    String data = msg.obj.toString() + "\n";
+                    //                                    try {
+                    //                                        out.write(data.getBytes("utf-8"));
+                    //                                        Log.e(TAG, "-------------server write data " + data);
+                    //                                    } catch (IOException e) {
+                    //                                        e.printStackTrace();
+                    //                                    }
+                    //                                    break;
+                    //                            }
+                    //                        }
+                    //                    };
+                    //                    Looper.loop();
                     break;
                 }
             }// end while(true)
@@ -120,11 +118,10 @@ public class ServerThread implements Runnable {
 
     }
 
-    public void write(String data){
-//        data = data+"\r\n";
+    public void write(String data) {
         try {
             out.write(data.getBytes("utf-8"));
-            Log.e(TAG, "---------- write data ok "+data);
+            Log.e(TAG, "---------- write data ok " + data);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -134,8 +131,7 @@ public class ServerThread implements Runnable {
         try {
             acceptFlag = false;
             serverSocket.close();
-            Log.e(TAG, "-------------- do cancel ,flag is "+acceptFlag);
-
+            Log.e(TAG, "-------------- do cancel ,flag is " + acceptFlag);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "----------------- cancel " + TAG + " error");

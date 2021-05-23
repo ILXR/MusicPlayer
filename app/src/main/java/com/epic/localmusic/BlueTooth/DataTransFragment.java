@@ -1,4 +1,4 @@
-package com.epic.localmusic.fragment;
+package com.epic.localmusic.BlueTooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
@@ -16,8 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.epic.localmusic.R;
-import com.epic.localmusic.activity.BlueToothActivity;
-import com.epic.localmusic.util.Params;
 
 /**
  * Created by Administrator on 2017/4/4.
@@ -31,7 +29,7 @@ public class DataTransFragment extends Fragment {
     ArrayAdapter<String> dataListAdapter;
 
     BlueToothActivity mainActivity;
-    Handler      uiHandler;
+    Handler           uiHandler;
 
     BluetoothDevice remoteDevice;
 
@@ -62,7 +60,6 @@ public class DataTransFragment extends Fragment {
 
         dataListAdapter = new ArrayAdapter<String>(getContext(), R.layout.layout_item_new_data);
         showDataLv.setAdapter(dataListAdapter);
-
     }
 
     @Override
@@ -88,12 +85,13 @@ public class DataTransFragment extends Fragment {
     public void updateDataView(String newMsg, int role) {
 
         if (role == Params.REMOTE) {
-            String remoteName = remoteDevice.getName()==null ? "未命名设备":remoteDevice.getName();
+            String remoteName = remoteDevice.getName() == null ? "未命名设备" : remoteDevice.getName();
             newMsg = remoteName + " : " + newMsg;
-        } else if (role == Params.ME){
+        } else if (role == Params.ME) {
             newMsg = "我 : " + newMsg;
         }
-        dataListAdapter.add(newMsg);
+        dataListAdapter.insert(newMsg, 0);
+        //dataListAdapter.add(newMsg);
     }
 
     /**

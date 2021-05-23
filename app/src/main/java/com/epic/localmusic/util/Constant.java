@@ -8,6 +8,8 @@ public class Constant {
 	public static final String SERVICE_NAME = "com.example.vinyl.service.MediaPlayerService";//服务的名称为包名+类名
 	//播放状态
 	public static final String STATUS = "status";
+
+	//WebSocket相关
 	//public static final String WebSocketUrl = "ws://222.20.79.254";
 	public static final String WebSocketUrl ="ws://192.168.137.1:5678";
 	public static enum ConnectStatus {

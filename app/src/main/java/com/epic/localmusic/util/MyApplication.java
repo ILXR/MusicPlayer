@@ -10,7 +10,7 @@ import com.epic.localmusic.WebSocket.WebSocketHandler;
 import com.epic.localmusic.service.MusicPlayerService;
 
 
-public class MyApplication extends Application{
+public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
 
     private static Context context;
@@ -20,7 +20,7 @@ public class MyApplication extends Application{
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        Intent startIntent = new Intent(MyApplication.this,MusicPlayerService.class);
+        Intent startIntent = new Intent(MyApplication.this, MusicPlayerService.class);
         startService(startIntent);
         initNightMode();
         WebSocketHandler.getInstance().testConnect();
@@ -35,6 +35,7 @@ public class MyApplication extends Application{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
     }
+
 
     public static Context getContext() {
         return context;

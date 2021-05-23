@@ -1,4 +1,4 @@
-package com.epic.localmusic.Thread;
+package com.epic.localmusic.BlueTooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -6,8 +6,6 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
-import com.epic.localmusic.util.Params;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,8 +70,8 @@ public class ClientThread implements Runnable {
                     int len;
                     String content;
                     try {
-                        while ((len=in.read(buffer)) != -1) {
-                            content=new String(buffer, 0, len);
+                        while ((len = in.read(buffer)) != -1) {
+                            content = new String(buffer, 0, len);
                             Message message = new Message();
                             message.what = Params.MSG_CLIENT_REV_NEW;
                             message.obj = content;
@@ -87,25 +85,25 @@ public class ClientThread implements Runnable {
                 }
             }).start();
 
-//            Looper.prepare();
-//            writeHandler = new Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    switch (msg.what) {
-//                        case Params.MSG_CLIENT_WRITE_NEW:
-//                            String data = msg.obj.toString() + "\n";
-//                            try {
-//                                out.write(data.getBytes("utf-8"));
-//                                Log.e(TAG, "-------------client write data " + data);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                            break;
-//
-//                    }
-//                }
-//            };
-//            Looper.loop();
+            //            Looper.prepare();
+            //            writeHandler = new Handler() {
+            //                @Override
+            //                public void handleMessage(Message msg) {
+            //                    switch (msg.what) {
+            //                        case Params.MSG_CLIENT_WRITE_NEW:
+            //                            String data = msg.obj.toString() + "\n";
+            //                            try {
+            //                                out.write(data.getBytes("utf-8"));
+            //                                Log.e(TAG, "-------------client write data " + data);
+            //                            } catch (IOException e) {
+            //                                e.printStackTrace();
+            //                            }
+            //                            break;
+            //
+            //                    }
+            //                }
+            //            };
+            //            Looper.loop();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,11 +112,11 @@ public class ClientThread implements Runnable {
     }
 
 
-    public void write(String data){
-//        data = data+"\r\n";
+    public void write(String data) {
+        //        data = data+"\r\n";
         try {
             out.write(data.getBytes("utf-8"));
-            Log.e(TAG, "---------- write data ok "+data);
+            Log.e(TAG, "---------- write data ok " + data);
         } catch (IOException e) {
             e.printStackTrace();
         }

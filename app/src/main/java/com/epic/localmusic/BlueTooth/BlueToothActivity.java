@@ -1,7 +1,7 @@
-package com.epic.localmusic.activity;
+package com.epic.localmusic.BlueTooth;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,41 +15,35 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.epic.localmusic.R;
-import com.epic.localmusic.fragment.DataTransFragment;
-import com.epic.localmusic.fragment.DeviceListFragment;
-import com.epic.localmusic.util.Params;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlueToothActivity extends AppCompatActivity {
 
-    final String TAG = "MainActivity";
+    final String TAG = "BlueToothActivity";
 
     TabLayout      tabLayout;
     ViewPager      viewPager;
     MyPagerAdapter pagerAdapter;
-    String[]       titleList    =new String[]{"设备列表","数据传输"};
-    List<Fragment> fragmentList =new ArrayList<>();
+    String[]       titleList    = new String[]{"设备列表", "数据传输"};
+    List<Fragment> fragmentList = new ArrayList<>();
 
     DeviceListFragment deviceListFragment;
     DataTransFragment  dataTransFragment;
 
-    BluetoothAdapter bluetoothAdapter;
-
-    Handler uiHandler =new Handler(){
+    Handler uiHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-
-            switch (msg.what){
+            switch (msg.what) {
                 case Params.MSG_REV_A_CLIENT:
-                    Log.e(TAG,"--------- uihandler set device name, go to data frag");
+                    Log.e(TAG, "--------- uihandler set device name, go to data frag");
                     BluetoothDevice clientDevice = (BluetoothDevice) msg.obj;
                     dataTransFragment.receiveClient(clientDevice);
                     viewPager.setCurrentItem(1);
                     break;
                 case Params.MSG_CONNECT_TO_SERVER:
-                    Log.e(TAG,"--------- uihandler set device name, go to data frag");
+                    Log.e(TAG, "--------- uihandler set device name, go to data frag");
                     BluetoothDevice serverDevice = (BluetoothDevice) msg.obj;
                     dataTransFragment.connectServer(serverDevice);
                     viewPager.setCurrentItem(1);
@@ -68,26 +62,54 @@ public class BlueToothActivity extends AppCompatActivity {
                     deviceListFragment.writeData(dataSend);
                     break;
 
+                case Params.MSG_CONNECT_FAILED:
+                    toast("蓝牙连接失败！");
+                    break;
+                case Params.MSG_CONNECT_SUCCEED:
+                    String name = BlueToothManager.getInstance().getDeviceName();
+                    toast("蓝牙连接成功，设备" + name);
+                    Log.i(TAG, "handleMessage: 蓝牙连接成功，设备" + name);
+                    if (name.equals("RC1033")) {
+                        Log.i(TAG, "发送STARTCODE");
+                        BlueToothManager.getInstance().send(Params.START_CODE);
+                    }
+                    break;
             }
         }
     };
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case Params.MY_PERMISSION_REQUEST_CONSTANT:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted 授予权限
+                    //处理授权之后逻辑
+                } else {
+                    // Permission Denied 权限被拒绝
+                    Toast.makeText(this, "权限被禁用", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        bluetoothAdapter= BluetoothAdapter.getDefaultAdapter();
-
         initUI();
     }
 
 
     /**
      * 返回 uiHandler
+     *
      * @return
      */
-    public Handler getUiHandler(){
+    public Handler getUiHandler() {
         return uiHandler;
     }
 
@@ -95,18 +117,18 @@ public class BlueToothActivity extends AppCompatActivity {
      * 初始化界面
      */
     private void initUI() {
-        tabLayout= (TabLayout) findViewById(R.id.tab_layout);
-        viewPager= (ViewPager) findViewById(R.id.view_pager);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
 
         tabLayout.addTab(tabLayout.newTab().setText(titleList[0]));
         tabLayout.addTab(tabLayout.newTab().setText(titleList[1]));
 
-        deviceListFragment=new DeviceListFragment();
-        dataTransFragment=new DataTransFragment();
+        deviceListFragment = new DeviceListFragment();
+        dataTransFragment = new DataTransFragment();
         fragmentList.add(deviceListFragment);
         fragmentList.add(dataTransFragment);
 
-        pagerAdapter=new MyPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -139,7 +161,7 @@ public class BlueToothActivity extends AppCompatActivity {
     /**
      * Toast 提示
      */
-    public void toast(String str){
+    public void toast(String str) {
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
 }

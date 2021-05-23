@@ -1,5 +1,6 @@
 package com.epic.localmusic.activity;
 
+import android.bluetooth.BluetoothManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.epic.localmusic.BlueTooth.BlueToothActivity;
+import com.epic.localmusic.BlueTooth.BlueToothManager;
 import com.epic.localmusic.R;
 import com.epic.localmusic.adapter.HomeListViewAdapter;
 import com.epic.localmusic.database.DBManager;
@@ -98,7 +101,7 @@ public class HomeActivity extends PlayBarBaseActivity {
         setContentView(R.layout.activity_home);
         isFirst = MyMusicUtil.getIsFirst();
         Log.d("isFirst!!!!", String.valueOf(isFirst));
-        if(isFirst == true){  //app是第一次启动
+        if (isFirst == true) {  //app是第一次启动
             final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setTitle("EpicMusic");
             dialog.setMessage("第一次启动EpicMusic，是否先扫描本地音乐");
@@ -106,7 +109,7 @@ public class HomeActivity extends PlayBarBaseActivity {
             dialog.setPositiveButton("是", new DialogInterface.OnClickListener() {  //跳转到扫描activity
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent intent = new Intent(HomeActivity.this,ScanActivity.class);
+                    Intent intent = new Intent(HomeActivity.this, ScanActivity.class);
                     startActivity(intent);
                 }
             });
@@ -122,7 +125,7 @@ public class HomeActivity extends PlayBarBaseActivity {
 
         dbManager = DBManager.getInstance(HomeActivity.this);
 
-        toolbar = (Toolbar)findViewById(R.id.home_activity_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.home_activity_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -133,7 +136,7 @@ public class HomeActivity extends PlayBarBaseActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navView.getHeaderView(0);
-        navHeadImage = (ImageView)headerView.findViewById(R.id.nav_head_bg_iv);
+        navHeadImage = (ImageView) headerView.findViewById(R.id.nav_head_bg_iv);
         loadBingPic();
 
         refreshNightModeTitle();
@@ -142,30 +145,30 @@ public class HomeActivity extends PlayBarBaseActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 drawerLayout.closeDrawers();
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.nav_bluetooth: // 蓝牙设备
-                        Intent intentBlueTooth = new Intent(HomeActivity.this,BlueToothActivity.class);
+                        Intent intentBlueTooth = new Intent(HomeActivity.this, BlueToothActivity.class);
                         startActivity(intentBlueTooth);
                         break;
                     case R.id.nav_theme:  //主题中心
                         isStartTheme = true;
-                        Intent intentTheme = new Intent(HomeActivity.this,ThemeActivity.class);
+                        Intent intentTheme = new Intent(HomeActivity.this, ThemeActivity.class);
                         startActivity(intentTheme);
                         break;
                     case R.id.nav_night_mode:  //夜间模式
-                        if(MyMusicUtil.getNightMode(HomeActivity.this)){   //当前为夜间模式，则恢复之前的主题
-                            MyMusicUtil.setNightMode(HomeActivity.this,false);  //点击之后是日间模式
+                        if (MyMusicUtil.getNightMode(HomeActivity.this)) {   //当前为夜间模式，则恢复之前的主题
+                            MyMusicUtil.setNightMode(HomeActivity.this, false);  //点击之后是日间模式
                             int preTheme = MyMusicUtil.getPreTheme(HomeActivity.this);  //得到夜间模式之前的日间模式的颜色主题
-                            MyMusicUtil.setTheme(HomeActivity.this,preTheme);
-                        }else {  //当前为日间模式，则切换到夜间模式
-                            MyMusicUtil.setNightMode(HomeActivity.this,true);
-                            MyMusicUtil.setTheme(HomeActivity.this,ThemeActivity.THEME_SIZE-1);
+                            MyMusicUtil.setTheme(HomeActivity.this, preTheme);
+                        } else {  //当前为日间模式，则切换到夜间模式
+                            MyMusicUtil.setNightMode(HomeActivity.this, true);
+                            MyMusicUtil.setTheme(HomeActivity.this, ThemeActivity.THEME_SIZE - 1);
                         }
                         recreate();  //重新加载之后才能切换成功
                         refreshNightModeTitle();
                         break;
                     case R.id.nav_about_me:  //关于
-                        Intent aboutTheme = new Intent(HomeActivity.this,AboutActivity.class);
+                        Intent aboutTheme = new Intent(HomeActivity.this, AboutActivity.class);
                         startActivity(aboutTheme);
                         break;
                     case R.id.nav_logout:  //退出
@@ -173,7 +176,7 @@ public class HomeActivity extends PlayBarBaseActivity {
                         Intent intentBroadcast = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
                         intentBroadcast.putExtra(Constant.COMMAND, Constant.COMMAND_RELEASE);
                         sendBroadcast(intentBroadcast);
-                        Intent stopIntent = new Intent(HomeActivity.this,MusicPlayerService.class);
+                        Intent stopIntent = new Intent(HomeActivity.this, MusicPlayerService.class);
                         stopService(stopIntent);
                         break;
                 }
@@ -183,7 +186,7 @@ public class HomeActivity extends PlayBarBaseActivity {
 
         init();
 
-        Intent startIntent = new Intent(HomeActivity.this,MusicPlayerService.class);  //开启后台服务
+        Intent startIntent = new Intent(HomeActivity.this, MusicPlayerService.class);  //开启后台服务
         startService(startIntent);
 
     }
@@ -191,10 +194,10 @@ public class HomeActivity extends PlayBarBaseActivity {
     /**
      * 滑动窗口显示的文字
      */
-    private void refreshNightModeTitle(){
-        if (MyMusicUtil.getNightMode(HomeActivity.this)){
+    private void refreshNightModeTitle() {
+        if (MyMusicUtil.getNightMode(HomeActivity.this)) {
             navView.getMenu().findItem(R.id.nav_night_mode).setTitle("日间模式");
-        }else {
+        } else {
             navView.getMenu().findItem(R.id.nav_night_mode).setTitle("夜间模式");
         }
     }
@@ -216,12 +219,12 @@ public class HomeActivity extends PlayBarBaseActivity {
     /**
      * 初始化控件
      */
-    private void init(){
+    private void init() {
         localMusicLayout = (LinearLayout) findViewById(R.id.home_local_music_ll);
         lastPlayLayout = (LinearLayout) findViewById(R.id.home_recently_music_ll);
         myLoveLayout = (LinearLayout) findViewById(R.id.home_my_love_music_ll);
         myListTitleLayout = (LinearLayout) findViewById(R.id.home_my_list_title_ll);
-        listView = (ListView)findViewById(R.id.home_my_list_lv);
+        listView = (ListView) findViewById(R.id.home_my_list_lv);
         localMusicCountText = (TextView) findViewById(R.id.home_local_music_count_tv);
         lastPlayCountText = (TextView) findViewById(R.id.home_recently_music_count_tv);
         myLoveCountText = (TextView) findViewById(R.id.home_my_love_music_count_tv);
@@ -231,7 +234,7 @@ public class HomeActivity extends PlayBarBaseActivity {
         localMusicLayout.setOnClickListener(new View.OnClickListener() {  //本地音乐
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this,LocalMusicActivity.class);
+                Intent intent = new Intent(HomeActivity.this, LocalMusicActivity.class);
                 startActivity(intent);
             }
         });
@@ -239,8 +242,8 @@ public class HomeActivity extends PlayBarBaseActivity {
         lastPlayLayout.setOnClickListener(new View.OnClickListener() {  //最近音乐
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this,LastMyloveActivity.class);
-                intent.putExtra(Constant.LABEL,Constant.LABEL_LAST);
+                Intent intent = new Intent(HomeActivity.this, LastMyloveActivity.class);
+                intent.putExtra(Constant.LABEL, Constant.LABEL_LAST);
                 startActivity(intent);
             }
         });
@@ -248,28 +251,28 @@ public class HomeActivity extends PlayBarBaseActivity {
         myLoveLayout.setOnClickListener(new View.OnClickListener() {  //我的喜爱
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this,LastMyloveActivity.class);
-                intent.putExtra(Constant.LABEL,Constant.LABEL_MYLOVE);
+                Intent intent = new Intent(HomeActivity.this, LastMyloveActivity.class);
+                intent.putExtra(Constant.LABEL, Constant.LABEL_MYLOVE);
                 startActivity(intent);
             }
         });
 
         playListInfo = dbManager.getMyPlayList();
-        adapter = new HomeListViewAdapter(playListInfo,this,dbManager);
+        adapter = new HomeListViewAdapter(playListInfo, this, dbManager);
         listView.setAdapter(adapter);
         myPlayListAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
-                View view = LayoutInflater.from(HomeActivity.this).inflate(R.layout.dialog_create_playlist,null);
-                final EditText playlistEdit = (EditText)view.findViewById(R.id.dialog_playlist_name_et);
+                View view = LayoutInflater.from(HomeActivity.this).inflate(R.layout.dialog_create_playlist, null);
+                final EditText playlistEdit = (EditText) view.findViewById(R.id.dialog_playlist_name_et);
                 builder.setView(view);
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = playlistEdit.getText().toString();
                         if (TextUtils.isEmpty(name)) {
-                            Toast.makeText(HomeActivity.this,"请输入歌单名",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomeActivity.this, "请输入歌单名", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         dbManager.createPlaylist(name);
@@ -295,7 +298,7 @@ public class HomeActivity extends PlayBarBaseActivity {
     /**
      * 更新歌单的数量
      */
-    public void updatePlaylistCount(){
+    public void updatePlaylistCount() {
         count = dbManager.getMusicCount(Constant.LIST_MYPLAY);
         myPlayListCountText.setText("(" + count + ")");
     }
@@ -304,7 +307,7 @@ public class HomeActivity extends PlayBarBaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (isStartTheme){  //如果去设置主题
+        if (isStartTheme) {  //如果去设置主题
             HomeActivity.this.finish();  //让活动结束，否则主题切换不成功
         }
         isStartTheme = false;
@@ -315,8 +318,8 @@ public class HomeActivity extends PlayBarBaseActivity {
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
-            if((System.currentTimeMillis()-exitTime) > 2000){
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
                 drawerLayout.closeDrawer(Gravity.START);
                 Toast.makeText(getApplicationContext(), "再按一次切换到桌面", Toast.LENGTH_SHORT).show();
                 exitTime = System.currentTimeMillis();
@@ -332,7 +335,7 @@ public class HomeActivity extends PlayBarBaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
@@ -342,43 +345,16 @@ public class HomeActivity extends PlayBarBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BlueToothManager.getInstance().Destroy();
+    }
+
     /**
      * 加载滑动窗口上方的图像
      */
-    private void loadBingPic(){
+    private void loadBingPic() {
         navHeadImage.setImageResource(R.drawable.bg_playlist);
-        //HttpUtil.sendOkHttpRequest(HttpUtil.requestBingPic, new Callback() {
-        //    @Override
-        //    public void onResponse(Call call, Response response) throws IOException {
-        //        try {
-        //            final String bingPic = response.body().string();
-        //            MyMusicUtil.setBingSharedPreference(bingPic);
-        //            runOnUiThread(new Runnable() {
-        //                @Override
-        //                public void run() {
-        //                    /*
-        //                    Glide框架是google推荐的Android图片加载框架
-        //                    Glide.with(fragment)
-        //                       .load(myUrl)
-        //                       .placeholder(placeholder)
-        //                       .fitCenter()
-        //                       .into(imageView);
-        //                     */
-        //                    Glide.with(MyApplication.getContext()).load(bingPic).into(navHeadImage);
-        //                }
-        //            });
-        //        }catch (Exception e){
-        //            //e.printStackTrace();
-        //            Log.e(TAG, "onResponse: 从服务器获取图片失败");
-        //            navHeadImage.setImageResource(R.drawable.bg_playlist);
-        //        }
-        //    }
-        //
-        //    @Override
-        //    public void onFailure(Call call, IOException e) {
-        //        e.printStackTrace();
-        //        navHeadImage.setImageResource(R.drawable.bg_playlist);
-        //    }
-        //});
     }
 }
