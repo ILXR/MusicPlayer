@@ -131,14 +131,16 @@ public class BlueToothManager {
                         if ((len = inStream.read(buffer)) != -1) {
                             content = new String(buffer, 0, len);
                             sendUiMsg(Params.MSG_CLIENT_REV_NEW, content);
-                            Log.i(TAG, "------------- blueTooth read data : " + content);
+                            //Log.i(TAG, "------------- blueTooth read data : " + content);
                             // TODO 处理蓝牙接收数据
+                            BtDataProcessor.getInstance().processString(content);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                         break;
                     }
                 }
+                BtDataProcessor.getInstance().endProcess();
             }
         });
         bluetoothThread.start();
@@ -150,10 +152,49 @@ public class BlueToothManager {
         try {
             if (bluetoothSocket.isConnected() && outStream != null) {
                 outStream.write(data.getBytes("utf-8"));
+                outStream.flush();
             } else {
                 Log.i(TAG, "send: bluetooth hasn't connected");
             }
             Log.i(TAG, "---------- send data ok " + data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendByteArray(byte[] array) {
+        try {
+            if (bluetoothSocket.isConnected() && outStream != null) {
+                outStream.write(array);
+                outStream.flush();
+            } else {
+                Log.i(TAG, "send: bluetooth hasn't connected");
+            }
+            Log.i(TAG, "---------- send byte data ok ");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendHexString(String data) {
+        Log.e(TAG, "send hex string: " + data);
+        int len = data.length();
+        byte[] hexBytes = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            // 两位一组，表示一个字节,把这样表示的16进制字符串，还原成一个字节
+            hexBytes[i / 2] = (byte) ((Character.digit(data.charAt(i), 16) << 4) + Character
+                    .digit(data.charAt(i + 1), 16));
+        }
+
+        try {
+            if (bluetoothSocket.isConnected() && outStream != null) {
+                byte[] hex_txt = {(byte) 0xF0, (byte) 0x02, (byte) 0xA2, (byte) 0x0D, (byte) 0x0A};
+                outStream.write(hex_txt);
+                outStream.flush();
+            } else {
+                Log.i(TAG, "send: bluetooth hasn't connected");
+            }
+            Log.i(TAG, "---------- send hex data ok " + data);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package com.epic.localmusic.BlueTooth;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import com.epic.localmusic.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class BlueToothActivity extends AppCompatActivity {
 
@@ -70,10 +73,22 @@ public class BlueToothActivity extends AppCompatActivity {
                     toast("蓝牙连接成功，设备" + name);
                     Log.i(TAG, "handleMessage: 蓝牙连接成功，设备" + name);
                     if (name.equals("RC1033")) {
-                        Log.i(TAG, "发送STARTCODE");
-                        BlueToothManager.getInstance().send(Params.START_CODE);
+                        // TODO 蓝牙激活数据有待改正 现在直接发送byte数组
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                Log.i(TAG, "发送STARTCODE");
+                                BlueToothManager.getInstance().sendByteArray(Params.START_BYTE_ARRAY);
+                                try {
+                                    Thread.sleep(2000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                BtDataProcessor.getInstance().startProcess();
+                            }
+                        }, 1000);
+                        break;
                     }
-                    break;
             }
         }
     };

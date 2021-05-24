@@ -1,4 +1,6 @@
 package com.epic.localmusic.WebSocket;
+
+import com.epic.localmusic.BlueTooth.Params;
 import com.epic.localmusic.util.Constant;
 import com.epic.localmusic.util.Constant.ConnectStatus;
 
@@ -30,7 +32,7 @@ public class WebSocketHandler extends WebSocketListener {
             .writeTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
             .connectTimeout(5, TimeUnit.SECONDS)
-            .pingInterval(20,TimeUnit.SECONDS)
+            .pingInterval(20, TimeUnit.SECONDS)
             .build();
 
     private static WebSocketHandler Instance;
@@ -40,7 +42,8 @@ public class WebSocketHandler extends WebSocketListener {
     public WebSocketHandler() {
         this.webSocketURL = Constant.WebSocketUrl;
     }
-    public  WebSocketHandler(String webSocketURL){
+
+    public WebSocketHandler(String webSocketURL) {
         this.webSocketURL = webSocketURL;
     }
 
@@ -53,7 +56,7 @@ public class WebSocketHandler extends WebSocketListener {
         return Instance;
     }
 
-    public void setUrl(String webSocketURL){
+    public void setUrl(String webSocketURL) {
         this.webSocketURL = webSocketURL;
     }
 
@@ -61,49 +64,48 @@ public class WebSocketHandler extends WebSocketListener {
         return status;
     }
 
-    public void testConnect(){
+    public void testConnect() {
         mockWebServer = new MockWebServer();
         //Handle message async.
         mockWebServer.enqueue(new MockResponse().withWebSocketUpgrade(new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
-                Log.i(TAG,"server onOpen");
-                Log.i(TAG,"server request header:" + response.request().headers());
-                Log.i(TAG,"server response header:" + response.headers());
-                Log.i(TAG,"server response:" + response);
+                Log.i(TAG, "server onOpen");
+                Log.i(TAG, "server request header:" + response.request().headers());
+                Log.i(TAG, "server response header:" + response.headers());
+                Log.i(TAG, "server response:" + response);
             }
 
             @Override
             public void onMessage(WebSocket webSocket, String string) {
-                Log.i(TAG,"server onMessage");
-                Log.i(TAG,"message:" + string);
-                webSocket.send("response-" + string);
+                //Log.i(TAG,"web socket server message:" + string);
+                //webSocket.send("response-" + string);
             }
 
             @Override
             public void onClosing(WebSocket webSocket, int code, String reason) {
-                Log.i(TAG,"server onClosing");
-                Log.i(TAG,"code:" + code + " reason:" + reason);
+                Log.i(TAG, "server onClosing");
+                Log.i(TAG, "code:" + code + " reason:" + reason);
             }
 
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
-                Log.i(TAG,"server onClosed");
-                Log.i(TAG,"code:" + code + " reason:" + reason);
+                Log.i(TAG, "server onClosed");
+                Log.i(TAG, "code:" + code + " reason:" + reason);
             }
 
             @Override
             public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-                Log.i(TAG,"server onFailure");
-                Log.i(TAG,"throwable:" + t);
-                Log.i(TAG,"response:" + response);
+                Log.i(TAG, "server onFailure");
+                Log.i(TAG, "throwable:" + t);
+                Log.i(TAG, "response:" + response);
             }
 
         }));
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url = "ws://"+mockWebServer.getHostName()+":"+mockWebServer.getPort();
+                String url = "ws://" + mockWebServer.getHostName() + ":" + mockWebServer.getPort();
                 setUrl(url);
                 connect();
             }
@@ -112,7 +114,7 @@ public class WebSocketHandler extends WebSocketListener {
 
     public void connect() {
         //构造request对象
-        if(webSocket!=null){
+        if (webSocket != null) {
             webSocket.cancel();
             status = ConnectStatus.Canceled;
         }
@@ -132,18 +134,26 @@ public class WebSocketHandler extends WebSocketListener {
                     .build();
             webSocket = client.newWebSocket(request, this);
             status = ConnectStatus.Connecting;
-        }else{
-            Log.e(TAG, "reConnect: Has been initialized" );
+        } else {
+            Log.e(TAG, "reConnect: Has been initialized");
         }
     }
 
     public void send(String text) {
         if (webSocket != null) {
-            Log.i(TAG, "send: "+ text );
+            Log.i(TAG, "send: " + text);
             webSocket.send(text);
         }
     }
-    public void send(ByteString bytes){
+
+    public void send(byte[] array) {
+        if (webSocket != null) {
+            Log.i(TAG, "send byte array: length " + array.length);
+            webSocket.send(new ByteString(array));
+        }
+    }
+
+    public void send(ByteString bytes) {
         webSocket.send(bytes);
     }
 
@@ -164,7 +174,7 @@ public class WebSocketHandler extends WebSocketListener {
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
-        Log.i(TAG, "onOpen: " );
+        Log.i(TAG, "onOpen: ");
         this.status = ConnectStatus.Open;
         send("测试WebSocket！");
     }
@@ -172,7 +182,7 @@ public class WebSocketHandler extends WebSocketListener {
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
-        Log.i(TAG, "onMessage: "+ text );
+        Log.i(TAG, "onMessage: " + text);
     }
 
     @Override
@@ -184,7 +194,7 @@ public class WebSocketHandler extends WebSocketListener {
     public void onClosing(WebSocket webSocket, int code, String reason) {
         super.onClosing(webSocket, code, reason);
         this.status = ConnectStatus.Closing;
-        Log.i(TAG, "onClosing: " );
+        Log.i(TAG, "onClosing: ");
     }
 
     @Override
@@ -197,7 +207,7 @@ public class WebSocketHandler extends WebSocketListener {
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
         super.onFailure(webSocket, t, response);
-        Log.i(TAG, "onFailure: "+ t.toString() );
+        Log.i(TAG, "onFailure: " + t.toString());
         t.printStackTrace();
         this.status = ConnectStatus.Canceled;
         try {
