@@ -1,6 +1,5 @@
 package com.epic.localmusic.activity;
 
-import android.bluetooth.BluetoothManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +30,7 @@ import com.epic.localmusic.adapter.HomeListViewAdapter;
 import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.entity.PlayListInfo;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 
 import java.util.List;
@@ -174,7 +173,7 @@ public class HomeActivity extends PlayBarBaseActivity {
                     case R.id.nav_logout:  //退出
                         finish();
                         Intent intentBroadcast = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                        intentBroadcast.putExtra(Constant.COMMAND, Constant.COMMAND_RELEASE);
+                        intentBroadcast.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_RELEASE);
                         sendBroadcast(intentBroadcast);
                         Intent stopIntent = new Intent(HomeActivity.this, MusicPlayerService.class);
                         stopService(stopIntent);
@@ -205,13 +204,13 @@ public class HomeActivity extends PlayBarBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        count = dbManager.getMusicCount(Constant.LIST_ALLMUSIC);
+        count = dbManager.getMusicCount(MusicConstant.LIST_ALLMUSIC);
         localMusicCountText.setText(count + "");
-        count = dbManager.getMusicCount(Constant.LIST_LASTPLAY);
+        count = dbManager.getMusicCount(MusicConstant.LIST_LASTPLAY);
         lastPlayCountText.setText(count + "");
-        count = dbManager.getMusicCount(Constant.LIST_MYLOVE);
+        count = dbManager.getMusicCount(MusicConstant.LIST_MYLOVE);
         myLoveCountText.setText(count + "");
-        count = dbManager.getMusicCount(Constant.LIST_MYPLAY);
+        count = dbManager.getMusicCount(MusicConstant.LIST_MYPLAY);
         myPlayListCountText.setText("(" + count + ")");
         adapter.updateDataList();
     }
@@ -243,7 +242,7 @@ public class HomeActivity extends PlayBarBaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, LastMyloveActivity.class);
-                intent.putExtra(Constant.LABEL, Constant.LABEL_LAST);
+                intent.putExtra(MusicConstant.LABEL, MusicConstant.LABEL_LAST);
                 startActivity(intent);
             }
         });
@@ -252,7 +251,7 @@ public class HomeActivity extends PlayBarBaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, LastMyloveActivity.class);
-                intent.putExtra(Constant.LABEL, Constant.LABEL_MYLOVE);
+                intent.putExtra(MusicConstant.LABEL, MusicConstant.LABEL_MYLOVE);
                 startActivity(intent);
             }
         });
@@ -299,7 +298,7 @@ public class HomeActivity extends PlayBarBaseActivity {
      * 更新歌单的数量
      */
     public void updatePlaylistCount() {
-        count = dbManager.getMusicCount(Constant.LIST_MYPLAY);
+        count = dbManager.getMusicCount(MusicConstant.LIST_MYPLAY);
         myPlayListCountText.setText("(" + count + ")");
     }
 

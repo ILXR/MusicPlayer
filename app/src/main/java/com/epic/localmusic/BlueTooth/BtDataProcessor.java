@@ -1,8 +1,14 @@
 package com.epic.localmusic.BlueTooth;
 
+
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.epic.localmusic.WebSocket.WebSocketHandler;
+
+import java.util.ArrayList;
 
 public class BtDataProcessor {
     private static final String TAG = "BtDataProcessor";
@@ -10,15 +16,15 @@ public class BtDataProcessor {
     private static       BtDataProcessor Instance;
     private static final int             MaxCount = 50;
 
-    private StringBuffer bufferToSend;// 完整的数据
-    private StringBuffer bufferLast; // 不完整的数据
-    private int          count;// 数据组数
-    private boolean      start;
+    private final ArrayList<String> listToSend;
+    private final StringBuffer      bufferLast; // 不完整的数据
+    private       int               count; // 数据组数
+    private       boolean           start;
 
     public BtDataProcessor() {
         this.count = 0;
         this.bufferLast = new StringBuffer();
-        this.bufferToSend = new StringBuffer();
+        this.listToSend = new ArrayList<>();
         this.start = false;
     }
 
@@ -47,17 +53,24 @@ public class BtDataProcessor {
         }
 
         addString(str);
+
         if (bufferLast.length() > 0) {
             int index = 0, temp;
             while ((temp = bufferLast.indexOf("#", index + 1)) != -1 && count < MaxCount) {
+                String data = bufferLast.substring(index, temp).replace("\n", "");
+                if (data.length() > 50) {
+                    // 丢弃错误数据
+                    listToSend.add(data);
+                    count++;
+                }
                 index = temp;
-                count++;
             }
-            bufferToSend.append(bufferLast.substring(0, index));
             bufferLast.delete(0, index);
         }
+        Log.i(TAG, "processString: length"+bufferLast.length());
+        Log.i(TAG, "processString: size"+listToSend.size());
         if (count == MaxCount) {
-            sendStringBuffer();
+            sendStringList();
         }
     }
 
@@ -70,36 +83,38 @@ public class BtDataProcessor {
         return tmp;
     }
 
-    private void sendStringBuffer() {
-        String length = Integer.toString(bufferToSend.length());
-        int num = 8 - length.length();
-        bufferToSend.insert(0, Params.WS_HEADER);
-        bufferToSend.insert(8, length);
-        while (num > 0) {
-            bufferToSend.insert(8, "0");
-            num--;
-        }
-        // TODO 需要将字符串(4个字节)转为字节 已经转了，但是不知道server接收是否正确
-        //WebSocketHandler.getInstance().send(bufferToSend.toString());
-        WebSocketHandler.getInstance().send(ConvertToASCII(bufferToSend.toString()));
-        bufferToSend.setLength(0);
+    private void sendStringList() {
+        // TODO 给服务器发送的json字符串
+        JSONObject data = new JSONObject();
+        JSONArray array = JSONArray.parseArray(JSON.toJSONString(listToSend));
+        data.put("data", array);
+        WebSocketHandler.getInstance().send(data.toJSONString());
+        listToSend.clear();
         count = 0;
     }
 
-    private void clearBuffer() {
+    private void clear() {
         bufferLast.setLength(0);
-        bufferToSend.setLength(0);
+        listToSend.clear();
         count = 0;
     }
 
     public void startProcess() {
-        clearBuffer();
+        clear();
         this.start = true;
+        //new Thread(new Runnable() {
+        //    @Override
+        //    public void run() {
+        //        while(start){
+        //            Thread.sleep(2000);
+        //        }
+        //    }
+        //}).start();
     }
 
     public void endProcess() {
         this.start = false;
-        clearBuffer();
+        clear();
     }
 
 }

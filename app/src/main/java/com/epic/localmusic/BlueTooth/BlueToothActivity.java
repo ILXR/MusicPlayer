@@ -1,7 +1,6 @@
 package com.epic.localmusic.BlueTooth;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +15,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.epic.localmusic.R;
+import com.epic.localmusic.util.EpicParams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,51 +39,46 @@ public class BlueToothActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case Params.MSG_REV_A_CLIENT:
+                case EpicParams.MSG_REV_A_CLIENT:
                     Log.e(TAG, "--------- uihandler set device name, go to data frag");
                     BluetoothDevice clientDevice = (BluetoothDevice) msg.obj;
                     dataTransFragment.receiveClient(clientDevice);
                     viewPager.setCurrentItem(1);
                     break;
-                case Params.MSG_CONNECT_TO_SERVER:
+                case EpicParams.MSG_CONNECT_TO_SERVER:
                     Log.e(TAG, "--------- uihandler set device name, go to data frag");
                     BluetoothDevice serverDevice = (BluetoothDevice) msg.obj;
                     dataTransFragment.connectServer(serverDevice);
                     viewPager.setCurrentItem(1);
                     break;
-                case Params.MSG_SERVER_REV_NEW:
+                case EpicParams.MSG_SERVER_REV_NEW:
                     String newMsgFromClient = msg.obj.toString();
-                    dataTransFragment.updateDataView(newMsgFromClient, Params.REMOTE);
+                    dataTransFragment.updateDataView(newMsgFromClient, EpicParams.REMOTE);
                     break;
-                case Params.MSG_CLIENT_REV_NEW:
+                case EpicParams.MSG_CLIENT_REV_NEW:
                     String newMsgFromServer = msg.obj.toString();
-                    dataTransFragment.updateDataView(newMsgFromServer, Params.REMOTE);
+                    dataTransFragment.updateDataView(newMsgFromServer, EpicParams.REMOTE);
                     break;
-                case Params.MSG_WRITE_DATA:
+                case EpicParams.MSG_WRITE_DATA:
                     String dataSend = msg.obj.toString();
-                    dataTransFragment.updateDataView(dataSend, Params.ME);
+                    dataTransFragment.updateDataView(dataSend, EpicParams.ME);
                     deviceListFragment.writeData(dataSend);
                     break;
 
-                case Params.MSG_CONNECT_FAILED:
+                case EpicParams.MSG_CONNECT_FAILED:
                     toast("蓝牙连接失败！");
                     break;
-                case Params.MSG_CONNECT_SUCCEED:
+                case EpicParams.MSG_CONNECT_SUCCEED:
                     String name = BlueToothManager.getInstance().getDeviceName();
                     toast("蓝牙连接成功，设备" + name);
                     Log.i(TAG, "handleMessage: 蓝牙连接成功，设备" + name);
                     if (name.equals("RC1033")) {
-                        // TODO 蓝牙激活数据有待改正 现在直接发送byte数组
+                        // TODO 蓝牙激活数据发送方式可优化，目前依靠定时器
                         new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 Log.i(TAG, "发送STARTCODE");
-                                BlueToothManager.getInstance().sendByteArray(Params.START_BYTE_ARRAY);
-                                try {
-                                    Thread.sleep(2000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                                BlueToothManager.getInstance().sendByteArray(EpicParams.START_BYTE_ARRAY);
                                 BtDataProcessor.getInstance().startProcess();
                             }
                         }, 1000);
@@ -96,7 +91,7 @@ public class BlueToothActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case Params.MY_PERMISSION_REQUEST_CONSTANT:
+            case EpicParams.MY_PERMISSION_REQUEST_CONSTANT:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted 授予权限
                     //处理授权之后逻辑

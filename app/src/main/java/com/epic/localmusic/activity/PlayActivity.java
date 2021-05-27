@@ -25,7 +25,7 @@ import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.fragment.PlayBarFragment;
 import com.epic.localmusic.receiver.PlayerManagerReceiver;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.CustomAttrValueUtil;
 import com.epic.localmusic.util.MyMusicUtil;
 import com.epic.localmusic.view.PlayingPopWindow;
@@ -108,10 +108,10 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {  //滑动条进行改变
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+                int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
                 if (musicId == -1) {
                     Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                    intent.putExtra("cmd", Constant.COMMAND_STOP);
+                    intent.putExtra("cmd", MusicConstant.COMMAND_STOP);
                     sendBroadcast(intent);
                     Toast.makeText(PlayActivity.this, "歌曲不存在", Toast.LENGTH_LONG).show();
                     return;
@@ -119,7 +119,7 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
 
                 //发送播放请求
                 Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                intent.putExtra("cmd", Constant.COMMAND_PROGRESS);
+                intent.putExtra("cmd", MusicConstant.COMMAND_PROGRESS);
                 intent.putExtra("current", mProgress);
                 sendBroadcast(intent);
             }
@@ -168,16 +168,16 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
     private void initPlayImage(){
         int status = PlayerManagerReceiver.status;
         switch (status) {
-            case Constant.STATUS_STOP:
+            case MusicConstant.STATUS_STOP:
                 playImage.setSelected(false);
                 break;
-            case Constant.STATUS_PLAY:
+            case MusicConstant.STATUS_PLAY:
                 playImage.setSelected(true);
                 break;
-            case Constant.STATUS_PAUSE:
+            case MusicConstant.STATUS_PAUSE:
                 playImage.setSelected(false);
                 break;
-            case Constant.STATUS_RUN:
+            case MusicConstant.STATUS_RUN:
                 playImage.setSelected(true);
                 break;
         }
@@ -188,7 +188,7 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
      * 设置播放模式
      */
     private void initPlayMode() {
-        int playMode = MyMusicUtil.getIntSharedPreference(Constant.KEY_MODE);
+        int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
         if (playMode == -1) {
             playMode = 0;
         }
@@ -200,7 +200,7 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
      * 设置标题
      */
     private void initTitle() {
-        int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+        int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
         if (musicId == -1) {
             musicNameText.setText("听听音乐");
             singerNameText.setText("好音质");
@@ -235,16 +235,16 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
 
 
     private void switchPlayMode() {
-        int playMode = MyMusicUtil.getIntSharedPreference(Constant.KEY_MODE);
+        int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
         switch (playMode) {
-            case Constant.PLAYMODE_SEQUENCE:
-                MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE, Constant.PLAYMODE_RANDOM);
+            case MusicConstant.PLAYMODE_SEQUENCE:
+                MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_RANDOM);
                 break;
-            case Constant.PLAYMODE_RANDOM:
-                MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE, Constant.PLAYMODE_SINGLE_REPEAT);
+            case MusicConstant.PLAYMODE_RANDOM:
+                MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SINGLE_REPEAT);
                 break;
-            case Constant.PLAYMODE_SINGLE_REPEAT:
-                MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE, Constant.PLAYMODE_SEQUENCE);
+            case MusicConstant.PLAYMODE_SINGLE_REPEAT:
+                MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SEQUENCE);
                 break;
         }
         initPlayMode();
@@ -269,28 +269,28 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
 
     private void play() {
         int musicId;
-        musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+        musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
         if (musicId == -1 || musicId == 0) {
-            musicId = dbManager.getFirstId(Constant.LIST_ALLMUSIC);
-            Intent intent = new Intent(Constant.MP_FILTER);
-            intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+            musicId = dbManager.getFirstId(MusicConstant.LIST_ALLMUSIC);
+            Intent intent = new Intent(MusicConstant.MP_FILTER);
+            intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
             sendBroadcast(intent);
             Toast.makeText(PlayActivity.this, "歌曲不存在", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (PlayerManagerReceiver.status == Constant.STATUS_PAUSE) {  //暂停-播放
+        if (PlayerManagerReceiver.status == MusicConstant.STATUS_PAUSE) {  //暂停-播放
             Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-            intent.putExtra(Constant.COMMAND, Constant.COMMAND_PLAY);
+            intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
             sendBroadcast(intent);
-        } else if (PlayerManagerReceiver.status == Constant.STATUS_PLAY) {  //播放-暂停
+        } else if (PlayerManagerReceiver.status == MusicConstant.STATUS_PLAY) {  //播放-暂停
             Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-            intent.putExtra(Constant.COMMAND, Constant.COMMAND_PAUSE);
+            intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PAUSE);
             sendBroadcast(intent);
         } else {  //停止-播放
             String path = dbManager.getMusicPath(musicId);
             Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-            intent.putExtra(Constant.COMMAND, Constant.COMMAND_PLAY);
-            intent.putExtra(Constant.KEY_PATH, path);
+            intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
+            intent.putExtra(MusicConstant.KEY_PATH, path);
             sendBroadcast(intent);
         }
     }
@@ -346,20 +346,20 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
         @Override
         public void onReceive(Context context, Intent intent) {  //根据PlayBar的状态来设置图片
             initTitle();
-            status = intent.getIntExtra(Constant.STATUS, 0);
-            current = intent.getIntExtra(Constant.KEY_CURRENT, 0);
-            duration = intent.getIntExtra(Constant.KEY_DURATION, 100);
+            status = intent.getIntExtra(MusicConstant.STATUS, 0);
+            current = intent.getIntExtra(MusicConstant.KEY_CURRENT, 0);
+            duration = intent.getIntExtra(MusicConstant.KEY_DURATION, 100);
             switch (status) {  //根据状态来切换图片以及seekBar
-                case Constant.STATUS_STOP:
+                case MusicConstant.STATUS_STOP:
                     playImage.setSelected(false);
                     break;
-                case Constant.STATUS_PLAY:
+                case MusicConstant.STATUS_PLAY:
                     playImage.setSelected(true);
                     break;
-                case Constant.STATUS_PAUSE:
+                case MusicConstant.STATUS_PAUSE:
                     playImage.setSelected(false);
                     break;
-                case Constant.STATUS_RUN:
+                case MusicConstant.STATUS_RUN:
                     playImage.setSelected(true);
                     seekBar.setMax(duration);
                     seekBar.setProgress(current);

@@ -25,7 +25,7 @@ import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.service.MusicPlayerService;
 import com.epic.localmusic.util.ChineseToEnglish;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.CustomAttrValueUtil;
 import com.epic.localmusic.util.MyMusicUtil;
 import com.epic.localmusic.util.SelectorUtil;
@@ -138,19 +138,19 @@ public class ScanActivity extends BaseActivity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                    case Constant.SCAN_NO_MUSIC:  //本地没有歌曲
+                    case MusicConstant.SCAN_NO_MUSIC:  //本地没有歌曲
                         Toast.makeText(ScanActivity.this,"本地没有歌曲，快去下载吧",Toast.LENGTH_SHORT).show();
                         scanComplete();
                         break;
-                    case Constant.SCAN_ERROR:  //扫描出错
+                    case MusicConstant.SCAN_ERROR:  //扫描出错
                         Toast.makeText(ScanActivity.this, "数据库错误", Toast.LENGTH_LONG).show();
                         scanComplete();
                         break;
-                    case Constant.SCAN_COMPLETE:  //扫描完成
+                    case MusicConstant.SCAN_COMPLETE:  //扫描完成
                         initCurrentPlaying();
                         scanComplete();
                         break;
-                    case Constant.SCAN_UPDATE:  //动态更新歌曲数量
+                    case MusicConstant.SCAN_UPDATE:  //动态更新歌曲数量
                         String path = msg.getData().getString("scanPath");
                         scanCountText.setText("已扫描到" + progress + "首歌曲");
                         scanPathText.setText(path);
@@ -230,7 +230,7 @@ public class ScanActivity extends BaseActivity {
                             progress++;
                             musicCount = cursor.getCount();
                             msg = new Message();    //每次都必须new，必须发送新对象，不然会报错
-                            msg.what = Constant.SCAN_UPDATE;
+                            msg.what = MusicConstant.SCAN_UPDATE;
                             msg.arg1 = musicCount;
                             handler.sendMessage(msg);  //更新UI界面
                             try {
@@ -241,19 +241,19 @@ public class ScanActivity extends BaseActivity {
                         }
 
                         //扫描完成获取一下当前播放音乐及路径
-                        currentMusicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+                        currentMusicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
                         currentMusicPath = dbManager.getMusicPath(currentMusicId);
 
                         Collections.sort(musicInfoList);  //将所有歌曲按照字母进行排序
                         dbManager.updateAllMusic(musicInfoList);
 
                         msg = new Message();
-                        msg.what = Constant.SCAN_COMPLETE;  //扫描完成
+                        msg.what = MusicConstant.SCAN_COMPLETE;  //扫描完成
                         handler.sendMessage(msg);  //更新UI界面
                     }
                     else {  //如果扫描结果为空
                         msg = new Message();
-                        msg.what = Constant.SCAN_NO_MUSIC;
+                        msg.what = MusicConstant.SCAN_NO_MUSIC;
                         handler.sendMessage(msg);  //更新UI界面
                     }
                     if (cursor != null) {
@@ -262,7 +262,7 @@ public class ScanActivity extends BaseActivity {
                 }catch (Exception e){
                     e.printStackTrace();
                     msg = new Message();
-                    msg.what = Constant.SCAN_ERROR;  //扫描出现异常
+                    msg.what = MusicConstant.SCAN_ERROR;  //扫描出现异常
                     handler.sendMessage(msg);
                 }
             }
@@ -286,10 +286,10 @@ public class ScanActivity extends BaseActivity {
                 }
             }
             if (isContain){
-                    MyMusicUtil.setIntSharedPreference(Constant.KEY_ID, id);  //存储当前播放的歌曲id
+                    MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID, id);  //存储当前播放的歌曲id
             }else {
                 Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+                intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
                 sendBroadcast(intent);
             }
 

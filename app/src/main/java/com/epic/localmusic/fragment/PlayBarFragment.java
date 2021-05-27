@@ -32,7 +32,7 @@ import com.epic.localmusic.activity.PlayActivity;
 import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.receiver.PlayerManagerReceiver;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 import com.epic.localmusic.view.PlayingPopWindow;
 
@@ -149,26 +149,26 @@ public class PlayBarFragment extends Fragment {
         playImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+                int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
                 if (musicId == -1 || musicId == 0) {
-                    Intent intent = new Intent(Constant.MP_FILTER);
-                    intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+                    Intent intent = new Intent(MusicConstant.MP_FILTER);
+                    intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
                     getActivity().sendBroadcast(intent);
                     return;
                 }
-                if (status == Constant.STATUS_PAUSE) {  //暂停状态
+                if (status == MusicConstant.STATUS_PAUSE) {  //暂停状态
                     Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                    intent.putExtra(Constant.COMMAND,Constant.COMMAND_PLAY);
+                    intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
                     getActivity().sendBroadcast(intent);
-                }else if (status == Constant.STATUS_PLAY) {  //播放状态
+                }else if (status == MusicConstant.STATUS_PLAY) {  //播放状态
                     Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                    intent.putExtra(Constant.COMMAND, Constant.COMMAND_PAUSE);
+                    intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PAUSE);
                     getActivity().sendBroadcast(intent);
                 }else {   //为停止状态时发送播放命令，并发送将要播放歌曲的路径
                     String path = dbManager.getMusicPath(musicId);
                     Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                    intent.putExtra(Constant.COMMAND, Constant.COMMAND_PLAY);
-                    intent.putExtra(Constant.KEY_PATH, path);
+                    intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
+                    intent.putExtra(MusicConstant.KEY_PATH, path);
                     getActivity().sendBroadcast(intent);
                 }
             }
@@ -196,27 +196,27 @@ public class PlayBarFragment extends Fragment {
      * 设置远程RemoteViews
      */
     public void initRemoteView(){
-        int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+        int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
         remoteViews = new RemoteViews(context.getPackageName(),R.layout.remote_layout);
         PendingIntent playPendingIntent = null;
         if (musicId == -1 || musicId == 0) {  //无播放歌曲
-            Intent playIntent = new Intent(Constant.MP_FILTER);
-            playIntent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+            Intent playIntent = new Intent(MusicConstant.MP_FILTER);
+            playIntent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
             playPendingIntent = PendingIntent.getBroadcast(context,0,playIntent,PendingIntent.FLAG_CANCEL_CURRENT);
         }
-        if (status == Constant.STATUS_PAUSE) {  //暂停状态
+        if (status == MusicConstant.STATUS_PAUSE) {  //暂停状态
             Intent playIntent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-            playIntent.putExtra(Constant.COMMAND,Constant.COMMAND_PLAY);
+            playIntent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
             playPendingIntent = PendingIntent.getBroadcast(context,0,playIntent,PendingIntent.FLAG_CANCEL_CURRENT);
-        }else if (status == Constant.STATUS_PLAY) {  //播放状态
+        }else if (status == MusicConstant.STATUS_PLAY) {  //播放状态
             Intent playIntent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-            playIntent.putExtra(Constant.COMMAND, Constant.COMMAND_PAUSE);
+            playIntent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PAUSE);
             playPendingIntent = PendingIntent.getBroadcast(context,0,playIntent,PendingIntent.FLAG_CANCEL_CURRENT);
         }else {
             String path = dbManager.getMusicPath(musicId);
             Intent playIntent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-            playIntent.putExtra(Constant.COMMAND, Constant.COMMAND_PLAY);
-            playIntent.putExtra(Constant.KEY_PATH, path);
+            playIntent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
+            playIntent.putExtra(MusicConstant.KEY_PATH, path);
             playPendingIntent = PendingIntent.getBroadcast(context,0,playIntent,PendingIntent.FLAG_CANCEL_CURRENT);
         }
 
@@ -295,7 +295,7 @@ public class PlayBarFragment extends Fragment {
      * 设置bar上音乐的名字
      */
     private void setMusicName(){
-        int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+        int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
         if (musicId == -1){
             musicNameText.setText("MusicPlayer");
             singerNameText.setText("Unknow");
@@ -314,19 +314,19 @@ public class PlayBarFragment extends Fragment {
     private void initPlayImage(){
         int status = PlayerManagerReceiver.status;
         switch (status) {
-            case Constant.STATUS_STOP:
+            case MusicConstant.STATUS_STOP:
                 playImage.setSelected(false);
                 remoteViews.setImageViewResource(R.id.remote_play_iv,R.drawable.play);
                 break;
-            case Constant.STATUS_PLAY:
+            case MusicConstant.STATUS_PLAY:
                 playImage.setSelected(true);
                 remoteViews.setImageViewResource(R.id.remote_play_iv,R.drawable.pause);
                 break;
-            case Constant.STATUS_PAUSE:
+            case MusicConstant.STATUS_PAUSE:
                 playImage.setSelected(false);
                 remoteViews.setImageViewResource(R.id.remote_play_iv,R.drawable.play);
                 break;
-            case Constant.STATUS_RUN:
+            case MusicConstant.STATUS_RUN:
                 playImage.setSelected(true);
                 remoteViews.setImageViewResource(R.id.remote_play_iv,R.drawable.pause);
                 break;
@@ -382,25 +382,25 @@ public class PlayBarFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             setMusicName();
-            status = intent.getIntExtra(Constant.STATUS,0);
-            current = intent.getIntExtra(Constant.KEY_CURRENT,0);
-            duration = intent.getIntExtra(Constant.KEY_DURATION,100);
+            status = intent.getIntExtra(MusicConstant.STATUS,0);
+            current = intent.getIntExtra(MusicConstant.KEY_CURRENT,0);
+            duration = intent.getIntExtra(MusicConstant.KEY_DURATION,100);
             Log.d(TAG+" - status", String.valueOf(status));
             switch (status){  //根据回调过来的状态来设置View
-                case Constant.STATUS_STOP:
+                case MusicConstant.STATUS_STOP:
                     playImage.setSelected(false);
                     remoteViews.setImageViewResource(R.id.remote_play_iv,R.drawable.play);
                     seekBar.setProgress(0);
                     break;
-                case Constant.STATUS_PLAY:
+                case MusicConstant.STATUS_PLAY:
                     playImage.setSelected(true);
                     remoteViews.setImageViewResource(R.id.remote_play_iv,R.drawable.pause);
                     break;
-                case Constant.STATUS_PAUSE:
+                case MusicConstant.STATUS_PAUSE:
                     playImage.setSelected(false);
                     remoteViews.setImageViewResource(R.id.remote_play_iv,R.drawable.play);
                     break;
-                case Constant.STATUS_RUN:
+                case MusicConstant.STATUS_RUN:
                     playImage.setSelected(true);
                     remoteViews.setImageViewResource(R.id.remote_play_iv,R.drawable.pause);
                     seekBar.setMax(duration);

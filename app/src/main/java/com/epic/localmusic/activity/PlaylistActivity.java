@@ -28,7 +28,7 @@ import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.entity.PlayListInfo;
 import com.epic.localmusic.receiver.PlayerManagerReceiver;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 import com.epic.localmusic.view.MusicPopMenuWindow;
 import com.mcxtzhang.swipemenulib.SwipeMenuLayout;
@@ -112,7 +112,7 @@ public class PlaylistActivity extends PlayBarBaseActivity {
             public void onDeleteMenuClick(View swipeView, int position) {
                 MusicInfo musicInfo = musicInfoList.get(position);
                 final int deleteId = musicInfo.getId();
-                final int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+                final int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
                 //从列表移除
                 int ret = dbManager.removeMusicFromPlaylist(deleteId,playListInfo.getId());
                 if (ret > 0){
@@ -122,7 +122,7 @@ public class PlaylistActivity extends PlayBarBaseActivity {
                 }
                 if (deleteId == musicId) {  //移除的是当前播放的音乐
                     Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                    intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+                    intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
                     sendBroadcast(intent);
                 }
                 musicInfoList = dbManager.getMusicListByPlaylist(playListInfo.getId());
@@ -157,7 +157,7 @@ public class PlaylistActivity extends PlayBarBaseActivity {
     }
 
     public void showPopFormBottom(MusicInfo musicInfo) {
-        MusicPopMenuWindow menuPopupWindow = new MusicPopMenuWindow(PlaylistActivity.this,musicInfo,findViewById(R.id.activity_playlist),Constant.ACTIVITY_MYLIST);
+        MusicPopMenuWindow menuPopupWindow = new MusicPopMenuWindow(PlaylistActivity.this,musicInfo,findViewById(R.id.activity_playlist), MusicConstant.ACTIVITY_MYLIST);
 //      设置Popupwindow显示位置（从底部弹出）
         menuPopupWindow.showAtLocation(findViewById(R.id.activity_playlist), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
         WindowManager.LayoutParams params = PlaylistActivity.this.getWindow().getAttributes();

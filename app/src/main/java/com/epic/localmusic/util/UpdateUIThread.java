@@ -36,19 +36,19 @@ public class UpdateUIThread extends Thread {
 	public void run() {
 		try {
 			while (playerManagerReceiver.getThreadNumber() == this.threadNumber) {
-				if (playerManagerReceiver.status == Constant.STATUS_STOP) {
+				if (playerManagerReceiver.status == MusicConstant.STATUS_STOP) {
 					break;
 				}
-				if (playerManagerReceiver.status == Constant.STATUS_PLAY || playerManagerReceiver.status == Constant.STATUS_PAUSE) {
+				if (playerManagerReceiver.status == MusicConstant.STATUS_PLAY || playerManagerReceiver.status == MusicConstant.STATUS_PAUSE) {
 					if (!playerManagerReceiver.getMediaPlayer().isPlaying()) {
 						break;
 					}
 					duration = playerManagerReceiver.getMediaPlayer().getDuration();
 					currentPosition = playerManagerReceiver.getMediaPlayer().getCurrentPosition();
 					Intent intent = new Intent(PlayBarFragment.ACTION_UPDATE_UI_PlAYBAR);
-					intent.putExtra(Constant.STATUS, Constant.STATUS_RUN);  //状态
-					intent.putExtra(Constant.KEY_DURATION, duration);  //播放长度
-					intent.putExtra(Constant.KEY_CURRENT, currentPosition);  //播放进度
+					intent.putExtra(MusicConstant.STATUS, MusicConstant.STATUS_RUN);  //状态
+					intent.putExtra(MusicConstant.KEY_DURATION, duration);  //播放长度
+					intent.putExtra(MusicConstant.KEY_CURRENT, currentPosition);  //播放进度
 					context.sendBroadcast(intent);
 				}
 				try {

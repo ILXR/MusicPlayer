@@ -30,7 +30,7 @@ import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.receiver.PlayerManagerReceiver;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 import com.epic.localmusic.view.MusicPopMenuWindow;
 import com.epic.localmusic.view.SideBar;
@@ -123,7 +123,7 @@ public class SingleFragment extends Fragment {
 
             @Override
             public void onContentClick(int position) {
-                MyMusicUtil.setIntSharedPreference(Constant.KEY_LIST,Constant.LIST_ALLMUSIC);  //存储要播放的音乐
+                MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_LIST, MusicConstant.LIST_ALLMUSIC);  //存储要播放的音乐
             }
         });
 
@@ -150,19 +150,19 @@ public class SingleFragment extends Fragment {
         playModeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int playMode = MyMusicUtil.getIntSharedPreference(Constant.KEY_MODE);
+                int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
                 switch (playMode){
-                    case Constant.PLAYMODE_SEQUENCE:
-                        playModeText.setText(Constant.PLAYMODE_RANDOM_TEXT);
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE,Constant.PLAYMODE_RANDOM);
+                    case MusicConstant.PLAYMODE_SEQUENCE:
+                        playModeText.setText(MusicConstant.PLAYMODE_RANDOM_TEXT);
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_RANDOM);
                         break;
-                    case Constant.PLAYMODE_RANDOM:
-                        playModeText.setText(Constant.PLAYMODE_SINGLE_REPEAT_TEXT);
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE,Constant.PLAYMODE_SINGLE_REPEAT);
+                    case MusicConstant.PLAYMODE_RANDOM:
+                        playModeText.setText(MusicConstant.PLAYMODE_SINGLE_REPEAT_TEXT);
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SINGLE_REPEAT);
                         break;
-                    case Constant.PLAYMODE_SINGLE_REPEAT:
-                        playModeText.setText(Constant.PLAYMODE_SEQUENCE_TEXT);
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE,Constant.PLAYMODE_SEQUENCE);
+                    case MusicConstant.PLAYMODE_SINGLE_REPEAT:
+                        playModeText.setText(MusicConstant.PLAYMODE_SEQUENCE_TEXT);
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SEQUENCE);
                         break;
                 }
                 initPlayMode();
@@ -186,16 +186,16 @@ public class SingleFragment extends Fragment {
      * 初始化播放模式
      */
     private void initDefaultPlayModeView(){
-        int playMode = MyMusicUtil.getIntSharedPreference(Constant.KEY_MODE);
+        int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
         switch (playMode){
-            case Constant.PLAYMODE_SEQUENCE:  //顺序
-                playModeText.setText(Constant.PLAYMODE_SEQUENCE_TEXT);
+            case MusicConstant.PLAYMODE_SEQUENCE:  //顺序
+                playModeText.setText(MusicConstant.PLAYMODE_SEQUENCE_TEXT);
                 break;
-            case Constant.PLAYMODE_RANDOM:  //随机
-                playModeText.setText(Constant.PLAYMODE_RANDOM_TEXT);
+            case MusicConstant.PLAYMODE_RANDOM:  //随机
+                playModeText.setText(MusicConstant.PLAYMODE_RANDOM_TEXT);
                 break;
-            case Constant.PLAYMODE_SINGLE_REPEAT:  //单曲循环
-                playModeText.setText(Constant.PLAYMODE_SINGLE_REPEAT_TEXT);
+            case MusicConstant.PLAYMODE_SINGLE_REPEAT:  //单曲循环
+                playModeText.setText(MusicConstant.PLAYMODE_SINGLE_REPEAT_TEXT);
                 break;
         }
         initPlayMode();
@@ -205,7 +205,7 @@ public class SingleFragment extends Fragment {
      * 设置播放模式
      */
     private void initPlayMode() {
-        int playMode = MyMusicUtil.getIntSharedPreference(Constant.KEY_MODE);
+        int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
         if (playMode == -1) {
             playMode = 0;
         }
@@ -235,7 +235,7 @@ public class SingleFragment extends Fragment {
      * 展示底部弹窗
      */
     public void showPopFormBottom(MusicInfo musicInfo) {
-        MusicPopMenuWindow menuPopupWindow = new MusicPopMenuWindow(getActivity(),musicInfo,view,Constant.ACTIVITY_LOCAL);
+        MusicPopMenuWindow menuPopupWindow = new MusicPopMenuWindow(getActivity(),musicInfo,view, MusicConstant.ACTIVITY_LOCAL);
         menuPopupWindow.showAtLocation(view, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);  //设置Popupwindow显示位置（从底部弹出）
         WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();
         params.alpha=0.7f;
@@ -264,7 +264,7 @@ public class SingleFragment extends Fragment {
     public void deleteOperate(final View swipeView,final int position,final Context context){
         final MusicInfo musicInfo = musicInfoList.get(position);
         final int curId = musicInfo.getId();
-        final int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+        final int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
         final DBManager dbManager = DBManager.getInstance(context);
         final String path = dbManager.getMusicPath(curId);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -291,9 +291,9 @@ public class SingleFragment extends Fragment {
                     }
                     if (curId == musicId){
                         Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                        intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+                        intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
                         context.sendBroadcast(intent);
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_ID,dbManager.getFirstId(Constant.LIST_ALLMUSIC));
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID,dbManager.getFirstId(MusicConstant.LIST_ALLMUSIC));
                     }
                 }else {
                 }
@@ -314,13 +314,13 @@ public class SingleFragment extends Fragment {
     private void update(View swipeView, int position,MusicInfo musicInfo,boolean isDelete){
         if (isDelete){
             final int curId = musicInfo.getId();
-            final int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+            final int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
             //从列表移除
-            dbManager.removeMusic(musicInfo.getId(),Constant.ACTIVITY_LOCAL);
+            dbManager.removeMusic(musicInfo.getId(), MusicConstant.ACTIVITY_LOCAL);
             if (curId == musicId) {
                 //移除的是当前播放的音乐
                 Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+                intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
                 context.sendBroadcast(intent);
             }
             recyclerViewAdapter.notifyItemRemoved(position);//推荐用这个

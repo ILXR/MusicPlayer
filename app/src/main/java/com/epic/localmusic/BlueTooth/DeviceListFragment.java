@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.epic.localmusic.R;
+import com.epic.localmusic.util.EpicParams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,6 @@ import java.util.Set;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-/**
- * Created by Administrator on 2017/4/4.
- */
 public class DeviceListFragment extends Fragment {
 
     final String TAG = "DeviceListFragment";
@@ -52,9 +50,6 @@ public class DeviceListFragment extends Fragment {
     BlueToothActivity mainActivity;
     Handler           uiHandler;
     Activity          mContext;
-
-    ClientThread clientThread;
-    ServerThread serverThread;
 
 
     @Override
@@ -102,7 +97,7 @@ public class DeviceListFragment extends Fragment {
 
         // 蓝牙未打开，询问打开
         if (!bluetoothAdapter.isEnabled()) {
-            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), Params.REQUEST_ENABLE_BT);
+            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), EpicParams.REQUEST_ENABLE_BT);
         }
 
         intentFilter = new IntentFilter();
@@ -129,11 +124,11 @@ public class DeviceListFragment extends Fragment {
         });
     }
 
-    private void sendConnectedDevice(BluetoothDevice device){
+    private void sendConnectedDevice(BluetoothDevice device) {
         // 通知 ui 连接的服务器端设备
-        if(uiHandler!=null && device!=null){
+        if (uiHandler != null && device != null) {
             Message message = new Message();
-            message.what = Params.MSG_CONNECT_TO_SERVER;
+            message.what = EpicParams.MSG_CONNECT_TO_SERVER;
             message.obj = device;
             uiHandler.sendMessage(message);
         }
@@ -160,7 +155,7 @@ public class DeviceListFragment extends Fragment {
             case R.id.enable_visibility:
                 Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                 enableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 600);
-                startActivityForResult(enableIntent, Params.REQUEST_ENABLE_VISIBILITY);
+                startActivityForResult(enableIntent, EpicParams.REQUEST_ENABLE_VISIBILITY);
                 break;
             case R.id.discovery:
                 if (bluetoothAdapter.isDiscovering()) {
@@ -187,13 +182,13 @@ public class DeviceListFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case Params.REQUEST_ENABLE_BT: {
+            case EpicParams.REQUEST_ENABLE_BT: {
                 if (resultCode == RESULT_OK) {
                     showBondDevice();
                 }
                 break;
             }
-            case Params.REQUEST_ENABLE_VISIBILITY: {
+            case EpicParams.REQUEST_ENABLE_VISIBILITY: {
                 if (resultCode == 600) {
                     toast("蓝牙已设置可见");
                 } else if (resultCode == RESULT_CANCELED) {

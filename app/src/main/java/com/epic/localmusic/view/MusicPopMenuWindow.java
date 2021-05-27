@@ -22,7 +22,7 @@ import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.entity.PlayListInfo;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 
 import java.io.File;
@@ -48,7 +48,7 @@ public class MusicPopMenuWindow extends PopupWindow{
 
     private PlayListInfo playListInfo;
 
-    private int witchActivity = Constant.ACTIVITY_LOCAL;
+    private int witchActivity = MusicConstant.ACTIVITY_LOCAL;
 
     private View parentView;
 
@@ -165,7 +165,7 @@ public class MusicPopMenuWindow extends PopupWindow{
      */
     public void deleteOperate(MusicInfo musicInfo,final Context context){
         final int deleteMusicId = musicInfo.getId();
-        final int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);  //当前播放音乐Id
+        final int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);  //当前播放音乐Id
         final DBManager dbManager = DBManager.getInstance(context);
         final String path = dbManager.getMusicPath(deleteMusicId);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -187,13 +187,13 @@ public class MusicPopMenuWindow extends PopupWindow{
                     }
                     if (deleteMusicId == musicId){  //删除的是当前播放的音乐
                         Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                        intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);  //播放音乐暂停
+                        intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);  //播放音乐暂停
                         context.sendBroadcast(intent);
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_ID,dbManager.getFirstId(Constant.LIST_ALLMUSIC));
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID,dbManager.getFirstId(MusicConstant.LIST_ALLMUSIC));
                     }
                 }else {
                     //从列表移除
-                    if (witchActivity == Constant.ACTIVITY_MYLIST){  //歌单
+                    if (witchActivity == MusicConstant.ACTIVITY_MYLIST){  //歌单
                         dbManager.removeMusicFromPlaylist(deleteMusicId,playListInfo.getId());
                     }else {
                         dbManager.removeMusic(deleteMusicId,witchActivity);
@@ -201,7 +201,7 @@ public class MusicPopMenuWindow extends PopupWindow{
 
                     if (deleteMusicId == musicId) {  //移除的是当前播放的音乐
                         Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                        intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+                        intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
                         context.sendBroadcast(intent);
                     }
                 }

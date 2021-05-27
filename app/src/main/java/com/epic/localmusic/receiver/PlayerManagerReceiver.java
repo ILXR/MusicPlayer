@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.fragment.PlayBarFragment;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 import com.epic.localmusic.util.UpdateUIThread;
 
@@ -27,7 +27,7 @@ public class PlayerManagerReceiver extends BroadcastReceiver {
     /**
      * 全局变量，播放器的状态
      */
-    public static int status = Constant.STATUS_STOP;
+    public static int status = MusicConstant.STATUS_STOP;
 
     private int threadNumber;
 
@@ -50,38 +50,38 @@ public class PlayerManagerReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        int cmd = intent.getIntExtra(Constant.COMMAND,Constant.COMMAND_INIT);
+        int cmd = intent.getIntExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_INIT);
         switch (cmd) {
-            case Constant.COMMAND_INIT:	//已经在创建的时候初始化了，可以撤销了
+            case MusicConstant.COMMAND_INIT:	//已经在创建的时候初始化了，可以撤销了
                 break;
-            case Constant.COMMAND_PLAY:  //接收播放指令
-                status = Constant.STATUS_PLAY;
-                String musicPath = intent.getStringExtra(Constant.KEY_PATH);
+            case MusicConstant.COMMAND_PLAY:  //接收播放指令
+                status = MusicConstant.STATUS_PLAY;
+                String musicPath = intent.getStringExtra(MusicConstant.KEY_PATH);
                 if (musicPath != null) {
                     playMusic(musicPath);
                 }else {
                     mediaPlayer.start();
                 }
                 break;
-            case Constant.COMMAND_PAUSE:  //接收暂停指令
+            case MusicConstant.COMMAND_PAUSE:  //接收暂停指令
                 mediaPlayer.pause();
-                status = Constant.STATUS_PAUSE;
+                status = MusicConstant.STATUS_PAUSE;
                 break;
-            case Constant.COMMAND_STOP: //接收停止指令、本程序停止状态都是删除当前播放音乐触发
+            case MusicConstant.COMMAND_STOP: //接收停止指令、本程序停止状态都是删除当前播放音乐触发
                 NumberRandom();
-                status = Constant.STATUS_STOP;
+                status = MusicConstant.STATUS_STOP;
                 if(mediaPlayer != null && mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
                 initStopOperate();
                 break;
-            case Constant.COMMAND_PROGRESS:  //拖动进度
-                int currentProgress = intent.getIntExtra(Constant.KEY_CURRENT, 0);
+            case MusicConstant.COMMAND_PROGRESS:  //拖动进度
+                int currentProgress = intent.getIntExtra(MusicConstant.KEY_CURRENT, 0);
                 mediaPlayer.seekTo(currentProgress);
                 break;
-            case Constant.COMMAND_RELEASE:  //结束播放
+            case MusicConstant.COMMAND_RELEASE:  //结束播放
                 NumberRandom();
-                status = Constant.STATUS_STOP;  //停止
+                status = MusicConstant.STATUS_STOP;  //停止
                 if(mediaPlayer != null) {
                     mediaPlayer.stop();
                     mediaPlayer.release();
@@ -98,7 +98,7 @@ public class PlayerManagerReceiver extends BroadcastReceiver {
      * 切换到歌单的第一首歌曲
      */
     private void initStopOperate(){
-        MyMusicUtil.setIntSharedPreference(Constant.KEY_ID,dbManager.getFirstId(Constant.LIST_ALLMUSIC));
+        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID,dbManager.getFirstId(MusicConstant.LIST_ALLMUSIC));
     }
 
 
@@ -165,7 +165,7 @@ public class PlayerManagerReceiver extends BroadcastReceiver {
      */
     private void UpdateUI() {
         Intent playBarIntent = new Intent(PlayBarFragment.ACTION_UPDATE_UI_PlAYBAR);  //playBar的广播接收器进行接收
-        playBarIntent.putExtra(Constant.STATUS, status);  //来通知状态
+        playBarIntent.putExtra(MusicConstant.STATUS, status);  //来通知状态
         context.sendBroadcast(playBarIntent);
 
         Intent intent = new Intent(ACTION_UPDATE_UI_ADAPTER);  //接收广播为所有歌曲列表的adapter(不用发送该广播也可以)
@@ -179,8 +179,8 @@ public class PlayerManagerReceiver extends BroadcastReceiver {
     private void initMediaPlayer() {
         NumberRandom(); // 改变线程号,使旧的播放线程停止
 
-        int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);  //当前正在播放音乐的id
-        int current = MyMusicUtil.getIntSharedPreference(Constant.KEY_CURRENT);  //当前播放的进度
+        int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);  //当前正在播放音乐的id
+        int current = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_CURRENT);  //当前播放的进度
 
         //如果是没取到当前正在播放的音乐ID，则从数据库中获取第一首音乐的播放信息初始化
         if (musicId == -1) {
@@ -193,13 +193,13 @@ public class PlayerManagerReceiver extends BroadcastReceiver {
         }
 
         if (current == 0) {
-            status = Constant.STATUS_STOP; //设置播放状态为停止
+            status = MusicConstant.STATUS_STOP; //设置播放状态为停止
         }else {
-            status = Constant.STATUS_PAUSE; //设置播放状态为暂停
+            status = MusicConstant.STATUS_PAUSE; //设置播放状态为暂停
         }
 
-        MyMusicUtil.setIntSharedPreference(Constant.KEY_ID,musicId);
-        MyMusicUtil.setStringSharedPreference(Constant.KEY_PATH,path);
+        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID,musicId);
+        MyMusicUtil.setStringSharedPreference(MusicConstant.KEY_PATH,path);
         UpdateUI();
     }
 

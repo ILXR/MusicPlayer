@@ -16,7 +16,7 @@ import com.epic.localmusic.R;
 import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.CustomAttrValueUtil;
 import com.epic.localmusic.util.MyMusicUtil;
 
@@ -121,7 +121,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         int appBackground = CustomAttrValueUtil.getAttrColorValue(R.attr.colorAccent,0xFFFA7298,context);  //app的背景颜色
         int defaultTextColor = CustomAttrValueUtil.getAttrColorValue(R.attr.text_color,R.color.grey700,context);  //文字的颜色
 
-        if (musicInfo.getId() == MyMusicUtil.getIntSharedPreference(Constant.KEY_ID)){  //如果是正在播放，则颜色改变，为选中状态
+        if (musicInfo.getId() == MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID)){  //如果是正在播放，则颜色改变，为选中状态
             holder.musicName.setTextColor(appBackground);
             holder.musicIndex.setTextColor(appBackground);
             holder.musicSinger.setTextColor(appBackground);
@@ -146,10 +146,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onClick(View v) {
                 String path = dbManager.getMusicPath(musicInfo.getId());
                 Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                intent.putExtra(Constant.COMMAND, Constant.COMMAND_PLAY);
-                intent.putExtra(Constant.KEY_PATH, path);
+                intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
+                intent.putExtra(MusicConstant.KEY_PATH, path);
                 context.sendBroadcast(intent);
-                MyMusicUtil.setIntSharedPreference(Constant.KEY_ID,musicInfo.getId());  //存储当前正在播放的音乐
+                MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID,musicInfo.getId());  //存储当前正在播放的音乐
                 notifyDataSetChanged();
                 if (onItemClickListener != null){
                     onItemClickListener.onContentClick(position);

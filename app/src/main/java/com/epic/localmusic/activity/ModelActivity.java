@@ -31,7 +31,7 @@ import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.receiver.PlayerManagerReceiver;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 import com.epic.localmusic.view.MusicPopMenuWindow;
 import com.epic.localmusic.view.SideBar;
@@ -130,13 +130,13 @@ public class ModelActivity extends PlayBarBaseActivity {
             public void onDeleteMenuClick(View swipeView, int position) {
                 MusicInfo musicInfo = musicInfoList.get(position);
                 final int curId = musicInfo.getId();
-                final int musicId = MyMusicUtil.getIntSharedPreference(Constant.KEY_ID);
+                final int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
                 //从列表移除
-                dbManager.removeMusic(musicInfo.getId(), Constant.ACTIVITY_LOCAL);
+                dbManager.removeMusic(musicInfo.getId(), MusicConstant.ACTIVITY_LOCAL);
                 if (curId == musicId) {
                     //移除的是当前播放的音乐
                     Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                    intent.putExtra(Constant.COMMAND, Constant.COMMAND_STOP);
+                    intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
                     sendBroadcast(intent);
                 }
                 adapter.notifyItemRemoved(position);//推荐用这个
@@ -186,19 +186,19 @@ public class ModelActivity extends PlayBarBaseActivity {
         playModeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int playMode = MyMusicUtil.getIntSharedPreference(Constant.KEY_MODE);
+                int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
                 switch (playMode) {
-                    case Constant.PLAYMODE_SEQUENCE:
-                        playModeText.setText(Constant.PLAYMODE_RANDOM_TEXT);
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE, Constant.PLAYMODE_RANDOM);
+                    case MusicConstant.PLAYMODE_SEQUENCE:
+                        playModeText.setText(MusicConstant.PLAYMODE_RANDOM_TEXT);
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_RANDOM);
                         break;
-                    case Constant.PLAYMODE_RANDOM:
-                        playModeText.setText(Constant.PLAYMODE_SINGLE_REPEAT_TEXT);
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE, Constant.PLAYMODE_SINGLE_REPEAT);
+                    case MusicConstant.PLAYMODE_RANDOM:
+                        playModeText.setText(MusicConstant.PLAYMODE_SINGLE_REPEAT_TEXT);
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SINGLE_REPEAT);
                         break;
-                    case Constant.PLAYMODE_SINGLE_REPEAT:
-                        playModeText.setText(Constant.PLAYMODE_SEQUENCE_TEXT);
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_MODE, Constant.PLAYMODE_SEQUENCE);
+                    case MusicConstant.PLAYMODE_SINGLE_REPEAT:
+                        playModeText.setText(MusicConstant.PLAYMODE_SEQUENCE_TEXT);
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SEQUENCE);
                         break;
                 }
                 initPlayMode();
@@ -208,16 +208,16 @@ public class ModelActivity extends PlayBarBaseActivity {
 
 
     private void initDefaultPlayModeView() {
-        int playMode = MyMusicUtil.getIntSharedPreference(Constant.KEY_MODE);
+        int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
         switch (playMode) {
-            case Constant.PLAYMODE_SEQUENCE:
-                playModeText.setText(Constant.PLAYMODE_SEQUENCE_TEXT);
+            case MusicConstant.PLAYMODE_SEQUENCE:
+                playModeText.setText(MusicConstant.PLAYMODE_SEQUENCE_TEXT);
                 break;
-            case Constant.PLAYMODE_RANDOM:
-                playModeText.setText(Constant.PLAYMODE_RANDOM_TEXT);
+            case MusicConstant.PLAYMODE_RANDOM:
+                playModeText.setText(MusicConstant.PLAYMODE_RANDOM_TEXT);
                 break;
-            case Constant.PLAYMODE_SINGLE_REPEAT:
-                playModeText.setText(Constant.PLAYMODE_SINGLE_REPEAT_TEXT);
+            case MusicConstant.PLAYMODE_SINGLE_REPEAT:
+                playModeText.setText(MusicConstant.PLAYMODE_SINGLE_REPEAT_TEXT);
                 break;
         }
         initPlayMode();
@@ -225,7 +225,7 @@ public class ModelActivity extends PlayBarBaseActivity {
 
 
     private void initPlayMode() {
-        int playMode = MyMusicUtil.getIntSharedPreference(Constant.KEY_MODE);
+        int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
         if (playMode == -1) {
             playMode = 0;
         }
@@ -259,7 +259,7 @@ public class ModelActivity extends PlayBarBaseActivity {
 
 
     public void showPopFormBottom(MusicInfo musicInfo) {
-        MusicPopMenuWindow menuPopupWindow = new MusicPopMenuWindow(ModelActivity.this, musicInfo, findViewById(R.id.activity_model),Constant.ACTIVITY_LOCAL);
+        MusicPopMenuWindow menuPopupWindow = new MusicPopMenuWindow(ModelActivity.this, musicInfo, findViewById(R.id.activity_model), MusicConstant.ACTIVITY_LOCAL);
 //      设置Popupwindow显示位置（从底部弹出）
         menuPopupWindow.showAtLocation(findViewById(R.id.activity_model), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         WindowManager.LayoutParams params = ModelActivity.this.getWindow().getAttributes();
@@ -432,7 +432,7 @@ public class ModelActivity extends PlayBarBaseActivity {
             int defaultTvColor = typed.getColor(0, getResources().getColor(R.color.grey700));
             typedArray.recycle();
 
-            if (musicInfo.getId() == MyMusicUtil.getIntSharedPreference(Constant.KEY_ID)){
+            if (musicInfo.getId() == MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID)){
                 holder.musicName.setTextColor(appbg);
                 holder.musicIndex.setTextColor(appbg);
                 holder.musicSinger.setTextColor(appbg);
@@ -456,19 +456,19 @@ public class ModelActivity extends PlayBarBaseActivity {
                 public void onClick(View v) {
                     String path = dbManager.getMusicPath(musicInfo.getId());
                     Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                    intent.putExtra(Constant.COMMAND, Constant.COMMAND_PLAY);
-                    intent.putExtra(Constant.KEY_PATH, path);
+                    intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
+                    intent.putExtra(MusicConstant.KEY_PATH, path);
                     sendBroadcast(intent);
-                    MyMusicUtil.setIntSharedPreference(Constant.KEY_ID, musicInfo.getId());
+                    MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID, musicInfo.getId());
                     if (type.equals(SINGER_TYPE)) {
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_LIST, Constant.LIST_SINGER);
-                        MyMusicUtil.setStringSharedPreference(Constant.KEY_LIST_ID, title);
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_LIST, MusicConstant.LIST_SINGER);
+                        MyMusicUtil.setStringSharedPreference(MusicConstant.KEY_LIST_ID, title);
                     } else if (type.equals(ALBUM_TYPE)) {
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_LIST, Constant.LIST_ALBUM);
-                        MyMusicUtil.setStringSharedPreference(Constant.KEY_LIST_ID, title);
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_LIST, MusicConstant.LIST_ALBUM);
+                        MyMusicUtil.setStringSharedPreference(MusicConstant.KEY_LIST_ID, title);
                     } else if (type.equals(FOLDER_TYPE)) {
-                        MyMusicUtil.setIntSharedPreference(Constant.KEY_LIST, Constant.LIST_FOLDER);
-                        MyMusicUtil.setStringSharedPreference(Constant.KEY_LIST_ID, getIntent().getStringExtra(KEY_PATH));
+                        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_LIST, MusicConstant.LIST_FOLDER);
+                        MyMusicUtil.setStringSharedPreference(MusicConstant.KEY_LIST_ID, getIntent().getStringExtra(KEY_PATH));
                     }
                     notifyDataSetChanged();
                 }

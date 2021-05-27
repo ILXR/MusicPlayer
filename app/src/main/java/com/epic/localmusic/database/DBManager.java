@@ -9,7 +9,7 @@ import android.util.Log;
 import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.entity.PlayListInfo;
 import com.epic.localmusic.util.ChineseToEnglish;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 
 import java.util.ArrayList;
@@ -53,16 +53,16 @@ public class DBManager {
         int musicCount = 0;
         Cursor cursor = null;
         switch (table) {
-            case Constant.LIST_ALLMUSIC:
+            case MusicConstant.LIST_ALLMUSIC:
                 cursor = db.query(DatabaseHelper.MUSIC_TABLE, null, null, null, null, null, null);
                 break;
-            case Constant.LIST_LASTPLAY:
+            case MusicConstant.LIST_LASTPLAY:
                 cursor = db.query(DatabaseHelper.LAST_PLAY_TABLE, null, null, null, null, null, null);
                 break;
-            case Constant.LIST_MYLOVE:
+            case MusicConstant.LIST_MYLOVE:
                 cursor = db.query(DatabaseHelper.MUSIC_TABLE, null, DatabaseHelper.LOVE_COLUMN + " = ? ", new String[]{"" + 1}, null, null, null);
                 break;
-            case Constant.LIST_MYPLAY:  //我的歌单
+            case MusicConstant.LIST_MYPLAY:  //我的歌单
                 cursor = db.query(DatabaseHelper.PLAY_LIST_TABLE, null, null, null, null, null, null);
                 break;
         }
@@ -414,13 +414,13 @@ public class DBManager {
     public void removeMusic(int id, int witchActivity) {
         db.execSQL("PRAGMA foreign_keys=ON");
         switch (witchActivity) {
-            case Constant.ACTIVITY_LOCAL:
+            case MusicConstant.ACTIVITY_LOCAL:
                 db.delete(DatabaseHelper.MUSIC_TABLE, ID_COLUMN + " = ? ", new String[]{"" + id});
                 break;
-            case Constant.ACTIVITY_RECENTPLAY:
+            case MusicConstant.ACTIVITY_RECENTPLAY:
                 db.delete(DatabaseHelper.LAST_PLAY_TABLE, ID_COLUMN + " = ? ", new String[]{"" + id});
                 break;
-            case Constant.ACTIVITY_MYLOVE:
+            case MusicConstant.ACTIVITY_MYLOVE:
                 ContentValues values = new ContentValues();
                 values.put(DatabaseHelper.LOVE_COLUMN, 0);
                 db.update(DatabaseHelper.MUSIC_TABLE, null, ID_COLUMN + " = ? ", new String[]{"" + id});
@@ -476,7 +476,7 @@ public class DBManager {
         int id = -1;
         try {
             switch (listNumber) {
-                case Constant.LIST_ALLMUSIC:
+                case MusicConstant.LIST_ALLMUSIC:
                     cursor = db.rawQuery("select min(id) from " + DatabaseHelper.MUSIC_TABLE, null);
                     break;
                 default:
@@ -508,7 +508,7 @@ public class DBManager {
         }
         // 如果当前是最后一首
         switch (playMode) {
-            case Constant.PLAYMODE_SEQUENCE:
+            case MusicConstant.PLAYMODE_SEQUENCE:
                 if ((index + 1) == musicList.size()) {
                     id = musicList.get(0);
                 } else {
@@ -516,9 +516,9 @@ public class DBManager {
                     id = musicList.get(index);
                 }
                 break;
-            case Constant.PLAYMODE_SINGLE_REPEAT:
+            case MusicConstant.PLAYMODE_SINGLE_REPEAT:
                 break;
-            case Constant.PLAYMODE_RANDOM:
+            case MusicConstant.PLAYMODE_RANDOM:
                 id = getRandomMusic(musicList, id);
                 break;
         }
@@ -538,7 +538,7 @@ public class DBManager {
             return -1;
         }
         switch (playMode) {
-            case Constant.PLAYMODE_SEQUENCE:  //顺序播放
+            case MusicConstant.PLAYMODE_SEQUENCE:  //顺序播放
                 if (index == 0) {  //当前是第一首，则播放最后一首
                     id = musicList.get(musicList.size() - 1);
                 } else {
@@ -546,9 +546,9 @@ public class DBManager {
                     id = musicList.get(index);
                 }
                 break;
-            case Constant.PLAYMODE_SINGLE_REPEAT:  //单曲循环
+            case MusicConstant.PLAYMODE_SINGLE_REPEAT:  //单曲循环
                 break;
-            case Constant.PLAYMODE_RANDOM:  //随机播放
+            case MusicConstant.PLAYMODE_RANDOM:  //随机播放
                 id = getRandomMusic(musicList, id);
                 break;
         }
@@ -563,17 +563,17 @@ public class DBManager {
         ArrayList<Integer> list = new ArrayList<Integer>();
         int musicId;
         switch (playList) {
-            case Constant.LIST_ALLMUSIC:
+            case MusicConstant.LIST_ALLMUSIC:
                 cursor = db.query(DatabaseHelper.MUSIC_TABLE, null, null, null, null, null, null);
                 break;
-            case Constant.LIST_LASTPLAY:  //最近播放
+            case MusicConstant.LIST_LASTPLAY:  //最近播放
                 cursor = db.rawQuery("select * from "+DatabaseHelper.LAST_PLAY_TABLE+" ORDER BY "+ DatabaseHelper.ID_COLUMN,null);
                 break;
-            case Constant.LIST_MYLOVE:
+            case MusicConstant.LIST_MYLOVE:
                 cursor = db.query(DatabaseHelper.MUSIC_TABLE, null, DatabaseHelper.LOVE_COLUMN + " = ?", new String[]{"" + 1}, null, null, null);
                 break;
-            case Constant.LIST_PLAYLIST:
-                int listId = MyMusicUtil.getIntSharedPreference(Constant.KEY_LIST_ID);
+            case MusicConstant.LIST_PLAYLIST:
+                int listId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_LIST_ID);
                 list = getMusicIdListByPlaylist(listId);
                 break;
             default:

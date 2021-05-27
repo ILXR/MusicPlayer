@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.epic.localmusic.R;
+import com.epic.localmusic.util.EpicParams;
 
 /**
  * Created by Administrator on 2017/4/4.
@@ -50,7 +51,7 @@ public class DataTransFragment extends Fragment {
             public void onClick(View v) {
                 String msgSend = inputEt.getText().toString();
                 Message message = new Message();
-                message.what = Params.MSG_WRITE_DATA;
+                message.what = EpicParams.MSG_WRITE_DATA;
                 message.obj = msgSend;
                 uiHandler.sendMessage(message);
 
@@ -84,10 +85,10 @@ public class DataTransFragment extends Fragment {
      */
     public void updateDataView(String newMsg, int role) {
 
-        if (role == Params.REMOTE) {
+        if (role == EpicParams.REMOTE) {
             String remoteName = remoteDevice.getName() == null ? "未命名设备" : remoteDevice.getName();
             newMsg = remoteName + " : " + newMsg;
-        } else if (role == Params.ME) {
+        } else if (role == EpicParams.ME) {
             newMsg = "我 : " + newMsg;
         }
         dataListAdapter.insert(newMsg, 0);

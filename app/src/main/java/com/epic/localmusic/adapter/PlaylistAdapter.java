@@ -16,7 +16,7 @@ import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.entity.PlayListInfo;
 import com.epic.localmusic.service.MusicPlayerService;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyMusicUtil;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         holder.musicName.setText(musicInfo.getName());
         holder.musicIndex.setText("" + (position + 1));
         holder.musicSinger.setText(musicInfo.getSinger());
-        if (musicInfo.getId() == MyMusicUtil.getIntSharedPreference(Constant.KEY_ID)){
+        if (musicInfo.getId() == MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID)){
             holder.musicName.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.musicIndex.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.musicSinger.setTextColor(context.getResources().getColor(R.color.colorAccent));
@@ -101,12 +101,12 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
             public void onClick(View v) {
                 String path = dbManager.getMusicPath(musicInfo.getId());
                 Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
-                intent.putExtra(Constant.COMMAND, Constant.COMMAND_PLAY);
-                intent.putExtra(Constant.KEY_PATH, path);
+                intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
+                intent.putExtra(MusicConstant.KEY_PATH, path);
                 context.sendBroadcast(intent);
-                MyMusicUtil.setIntSharedPreference(Constant.KEY_ID,musicInfo.getId());  //存储歌曲id
-                MyMusicUtil.setIntSharedPreference(Constant.KEY_LIST,Constant.LIST_PLAYLIST);  //存储歌单播放
-                MyMusicUtil.setIntSharedPreference(Constant.KEY_LIST_ID,playListInfo.getId());  //存储歌单id
+                MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID,musicInfo.getId());  //存储歌曲id
+                MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_LIST, MusicConstant.LIST_PLAYLIST);  //存储歌单播放
+                MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_LIST_ID,playListInfo.getId());  //存储歌单id
                 notifyDataSetChanged();
             }
         });

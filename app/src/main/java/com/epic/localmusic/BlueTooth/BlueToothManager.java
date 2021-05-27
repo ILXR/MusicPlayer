@@ -13,6 +13,8 @@ import java.util.UUID;
 
 import android.os.Handler;
 
+import com.epic.localmusic.util.EpicParams;
+
 public class BlueToothManager {
     private static final String TAG = "BlueToothManager";
 
@@ -104,7 +106,7 @@ public class BlueToothManager {
         disconnect();
         this.device = device;
         try {
-            bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(Params.UUID));
+            bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(EpicParams.UUID));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -116,10 +118,10 @@ public class BlueToothManager {
                     bluetoothSocket.connect();
                     outStream = bluetoothSocket.getOutputStream();
                     inStream = bluetoothSocket.getInputStream();
-                    sendUiMsg(Params.MSG_CONNECT_SUCCEED);
+                    sendUiMsg(EpicParams.MSG_CONNECT_SUCCEED);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    sendUiMsg(Params.MSG_CONNECT_FAILED);
+                    sendUiMsg(EpicParams.MSG_CONNECT_FAILED);
                     return;
                 }
 
@@ -130,9 +132,8 @@ public class BlueToothManager {
                     try {
                         if ((len = inStream.read(buffer)) != -1) {
                             content = new String(buffer, 0, len);
-                            sendUiMsg(Params.MSG_CLIENT_REV_NEW, content);
-                            //Log.i(TAG, "------------- blueTooth read data : " + content);
-                            // TODO 处理蓝牙接收数据
+                            sendUiMsg(EpicParams.MSG_CLIENT_REV_NEW, content);
+                            //Log.i(TAG, "------------- blueTooth read data : " + content);、
                             BtDataProcessor.getInstance().processString(content);
                         }
                     } catch (IOException e) {

@@ -18,7 +18,7 @@ import com.epic.localmusic.fragment.AlbumFragment;
 import com.epic.localmusic.fragment.FolderFragment;
 import com.epic.localmusic.fragment.SingerFragment;
 import com.epic.localmusic.fragment.SingleFragment;
-import com.epic.localmusic.util.Constant;
+import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.view.MyViewPager;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class LocalMusicActivity extends PlayBarBaseActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(Constant.LABEL_LOCAL);
+            actionBar.setTitle(MusicConstant.LABEL_LOCAL);
         }
         init();
     }

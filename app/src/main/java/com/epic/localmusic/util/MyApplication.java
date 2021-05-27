@@ -22,8 +22,7 @@ public class MyApplication extends Application {
         Intent startIntent = new Intent(MyApplication.this, MusicPlayerService.class);
         startService(startIntent);
         initNightMode();
-        // TODO WebSocket 测试代码需要修改
-        WebSocketHandler.getInstance().testConnect();
+        WebSocketHandler.getInstance().connect();
     }
 
 

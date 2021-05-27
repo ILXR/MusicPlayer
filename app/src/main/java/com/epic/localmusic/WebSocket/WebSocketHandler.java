@@ -1,8 +1,7 @@
 package com.epic.localmusic.WebSocket;
 
-import com.epic.localmusic.BlueTooth.Params;
-import com.epic.localmusic.util.Constant;
-import com.epic.localmusic.util.Constant.ConnectStatus;
+import com.epic.localmusic.util.EpicParams;
+import com.epic.localmusic.util.EpicParams.ConnectStatus;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -32,7 +31,7 @@ public class WebSocketHandler extends WebSocketListener {
             .writeTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
             .connectTimeout(5, TimeUnit.SECONDS)
-            .pingInterval(20, TimeUnit.SECONDS)
+            //.pingInterval(20, TimeUnit.SECONDS)
             .build();
 
     private static WebSocketHandler Instance;
@@ -40,7 +39,7 @@ public class WebSocketHandler extends WebSocketListener {
     MockWebServer mockWebServer;
 
     public WebSocketHandler() {
-        this.webSocketURL = Constant.WebSocketUrl;
+        this.webSocketURL = EpicParams.WS_SERVER_URL;
     }
 
     public WebSocketHandler(String webSocketURL) {
@@ -141,7 +140,7 @@ public class WebSocketHandler extends WebSocketListener {
 
     public void send(String text) {
         if (webSocket != null) {
-            Log.i(TAG, "send: " + text);
+            //Log.i(TAG, "send: " + text);
             webSocket.send(text);
         }
     }
@@ -176,12 +175,12 @@ public class WebSocketHandler extends WebSocketListener {
         super.onOpen(webSocket, response);
         Log.i(TAG, "onOpen: ");
         this.status = ConnectStatus.Open;
-        send("测试WebSocket！");
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
+        // TODO 处理服务器返回的操控命令
         Log.i(TAG, "onMessage: " + text);
     }
 
@@ -212,7 +211,7 @@ public class WebSocketHandler extends WebSocketListener {
         this.status = ConnectStatus.Canceled;
         try {
             //断线重连
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             reConnect();
         } catch (InterruptedException e) {
             e.printStackTrace();
