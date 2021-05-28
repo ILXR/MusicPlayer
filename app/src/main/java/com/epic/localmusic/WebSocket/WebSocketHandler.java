@@ -1,10 +1,24 @@
 package com.epic.localmusic.WebSocket;
 
+import com.epic.localmusic.activity.PlayActivity;
+import com.epic.localmusic.receiver.PlayerManagerReceiver;
+import com.epic.localmusic.service.MusicPlayerService;
 import com.epic.localmusic.util.EpicParams;
 import com.epic.localmusic.util.EpicParams.ConnectStatus;
 
+import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
+
+//import org.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
+import com.epic.localmusic.util.MusicConstant;
+import com.epic.localmusic.util.MyApplication;
+import com.epic.localmusic.util.MyMusicUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +51,9 @@ public class WebSocketHandler extends WebSocketListener {
     private static WebSocketHandler Instance;
 
     MockWebServer mockWebServer;
+
+    //控制音乐播放的本地广播
+    private LocalBroadcastManager playMusicBroadcastManager;
 
     public WebSocketHandler() {
         this.webSocketURL = EpicParams.WS_SERVER_URL;
@@ -181,6 +198,35 @@ public class WebSocketHandler extends WebSocketListener {
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
         // TODO 处理服务器返回的操控命令
+        // 获取系统音量管理器
+        AudioManager mAudioManager = (AudioManager)MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
+        // 解析json数据
+        JSONObject json = JSONObject.parseObject(text);
+        String actIndex = json.getString("actindex");
+        switch (actIndex){
+            case "0":
+                // TODO 播放
+                playMusicBroadcastManager = LocalBroadcastManager.getInstance(MyApplication.getContext());//获取实例
+                Intent intent = new Intent("playMusic");
+                playMusicBroadcastManager.sendBroadcast(intent);
+                break;
+            case "1":
+                // TODO 上一首
+                MyMusicUtil.playPreMusic(MyApplication.getContext());
+                break;
+            case "2":
+                // TODO 下一首
+                MyMusicUtil.playNextMusic(MyApplication.getContext());
+                break;
+            case "3":
+                // TODO 音量加
+                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,AudioManager.FLAG_SHOW_UI);
+                break;
+            case "4":
+                // TODO 音量减
+                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER,AudioManager.FLAG_SHOW_UI);
+                break;
+        }
         Log.i(TAG, "onMessage: " + text);
     }
 

@@ -8,8 +8,10 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ScaleDrawable;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -27,6 +29,7 @@ import com.epic.localmusic.receiver.PlayerManagerReceiver;
 import com.epic.localmusic.service.MusicPlayerService;
 import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.CustomAttrValueUtil;
+import com.epic.localmusic.util.MyApplication;
 import com.epic.localmusic.util.MyMusicUtil;
 import com.epic.localmusic.view.PlayingPopWindow;
 
@@ -66,6 +69,10 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
 
     private int current;
 
+    //本地广播接收器
+    private IntentFilter intentFilter;
+    private BroadcastReceiver localReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +82,19 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
         dbManager = DBManager.getInstance(PlayActivity.this);
         initView();
         register();
+        //注册本地广播监视器
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("playMusic");
+        localReceiver = new LocalReceiver();
+        registerReceiver(localReceiver,intentFilter);
+    }
+
+    class LocalReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context,"received playMusic",Toast.LENGTH_SHORT).show();
+            play();
+        }
     }
 
 
@@ -150,10 +170,14 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
                 play();
                 break;
             case R.id.iv_next:
-                MyMusicUtil.playNextMusic(this);
+                //MyMusicUtil.playNextMusic(this);
+                MyMusicUtil.playNextMusic(MyApplication.getContext());
                 break;
             case R.id.iv_prev:
                 MyMusicUtil.playPreMusic(this);
+                //MyMusicUtil.playPreMusic(MyApplication.getContext());
+                //AudioManager mAudioManager = (AudioManager)MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
+                //mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,AudioManager.FLAG_SHOW_UI);
                 break;
             case R.id.iv_menu:
                 showPopFormBottom();
@@ -333,7 +357,7 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
         unRegister();
-
+        unregisterReceiver(localReceiver);
     }
 
 
