@@ -11,12 +11,14 @@ import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.epic.localmusic.activity.PlayActivity;
 import com.epic.localmusic.activity.ThemeActivity;
 import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.entity.AlbumInfo;
 import com.epic.localmusic.entity.FolderInfo;
 import com.epic.localmusic.entity.MusicInfo;
 import com.epic.localmusic.entity.SingerInfo;
+import com.epic.localmusic.receiver.PlayerManagerReceiver;
 import com.epic.localmusic.service.MusicPlayerService;
 
 import java.io.File;
@@ -29,7 +31,6 @@ import java.util.Map;
 public class MyMusicUtil {
 
     private static final String TAG = MyMusicUtil.class.getName();
-
 
     /**
      * 获取当前播放的列表

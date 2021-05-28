@@ -73,7 +73,6 @@ public class BlueToothActivity extends AppCompatActivity {
                     toast("蓝牙连接成功，设备" + name);
                     Log.i(TAG, "handleMessage: 蓝牙连接成功，设备" + name);
                     if (name.equals("RC1033")) {
-                        // TODO 蓝牙激活数据发送方式可优化，目前依靠定时器
                         new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
@@ -127,8 +126,8 @@ public class BlueToothActivity extends AppCompatActivity {
      * 初始化界面
      */
     private void initUI() {
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.view_pager);
 
         tabLayout.addTab(tabLayout.newTab().setText(titleList[0]));
         tabLayout.addTab(tabLayout.newTab().setText(titleList[1]));

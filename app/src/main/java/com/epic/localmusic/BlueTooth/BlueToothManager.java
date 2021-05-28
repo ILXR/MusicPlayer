@@ -133,7 +133,6 @@ public class BlueToothManager {
                         if ((len = inStream.read(buffer)) != -1) {
                             content = new String(buffer, 0, len);
                             sendUiMsg(EpicParams.MSG_CLIENT_REV_NEW, content);
-                            //Log.i(TAG, "------------- blueTooth read data : " + content);、
                             BtDataProcessor.getInstance().processString(content);
                         }
                     } catch (IOException e) {

@@ -9,6 +9,7 @@ import com.epic.localmusic.util.EpicParams.ConnectStatus;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -197,37 +198,51 @@ public class WebSocketHandler extends WebSocketListener {
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
+        Log.i(TAG, "onMessage: " + text);
+
+
         // TODO 处理服务器返回的操控命令
+        //数据格式 {'actindex': 4, 'actname': 'QP'}
         // 获取系统音量管理器
-        AudioManager mAudioManager = (AudioManager)MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
+        AudioManager mAudioManager = (AudioManager) MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
         // 解析json数据
         JSONObject json = JSONObject.parseObject(text);
-        String actIndex = json.getString("actindex");
-        switch (actIndex){
-            case "0":
-                // TODO 播放
-                playMusicBroadcastManager = LocalBroadcastManager.getInstance(MyApplication.getContext());//获取实例
-                Intent intent = new Intent("playMusic");
-                playMusicBroadcastManager.sendBroadcast(intent);
+        int actIndex = json.getInteger("actindex");
+        switch (actIndex) {
+            case 0:
+                // TODO 音量加
+                Log.i(TAG, "onMessage: 音量加");
+                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
                 break;
-            case "1":
-                // TODO 上一首
-                MyMusicUtil.playPreMusic(MyApplication.getContext());
+            case 1:
+                // TODO 音量减
+                Log.i(TAG, "onMessage: 音量减");
+                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
                 break;
-            case "2":
+            case 2:
+                // TODO 播放/暂停
+                Log.i(TAG, "onMessage: 播放暂停");
+                MyApplication.getInstance().play();
+                break;
+            case 3:
                 // TODO 下一首
+                Log.i(TAG, "onMessage: 切切歌");
                 MyMusicUtil.playNextMusic(MyApplication.getContext());
                 break;
-            case "3":
-                // TODO 音量加
-                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,AudioManager.FLAG_SHOW_UI);
+            case 4:
+                // TODO 播放列表模式
+                Log.i(TAG, "onMessage: 播放列表模式");
+                int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
+                if (playMode == MusicConstant.PLAYMODE_RANDOM)
+                    MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SINGLE_REPEAT);
+                else if (playMode == MusicConstant.PLAYMODE_SINGLE_REPEAT)
+                    MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SEQUENCE);
+                else
+                    MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_RANDOM);
                 break;
-            case "4":
-                // TODO 音量减
-                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER,AudioManager.FLAG_SHOW_UI);
-                break;
+
         }
-        Log.i(TAG, "onMessage: " + text);
+
     }
 
     @Override
@@ -260,7 +275,8 @@ public class WebSocketHandler extends WebSocketListener {
             Thread.sleep(5000);
             reConnect();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.e(TAG, "onFailure");
         }
     }
 }

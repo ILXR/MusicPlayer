@@ -385,7 +385,7 @@ public class PlayBarFragment extends Fragment {
             status = intent.getIntExtra(MusicConstant.STATUS,0);
             current = intent.getIntExtra(MusicConstant.KEY_CURRENT,0);
             duration = intent.getIntExtra(MusicConstant.KEY_DURATION,100);
-            Log.d(TAG+" - status", String.valueOf(status));
+            //Log.d(TAG+" - status", String.valueOf(status));
             switch (status){  //根据回调过来的状态来设置View
                 case MusicConstant.STATUS_STOP:
                     playImage.setSelected(false);
