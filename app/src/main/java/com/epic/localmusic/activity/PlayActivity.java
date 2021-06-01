@@ -8,10 +8,8 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ScaleDrawable;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -38,39 +36,26 @@ import java.util.Locale;
 public class PlayActivity extends BaseActivity implements View.OnClickListener {
 
     private DBManager dbManager;
-
     private ImageView backImage;
-
     private ImageView playImage;
-
     private ImageView menuImage;
-
     private ImageView preImage;
-
     private ImageView nextImage;
-
     private ImageView modeImage;
-
-    private TextView curTimeText;
-
-    private TextView totalTimeText;
-
-    private TextView musicNameText;
-
-    private TextView singerNameText;
-
-    private SeekBar seekBar;
+    private TextView  curTimeText;
+    private TextView  totalTimeText;
+    private TextView  musicNameText;
+    private TextView  singerNameText;
+    private SeekBar   seekBar;
 
     private PlayReceiver mReceiver;
 
     private int mProgress;
-
     private int duration;
-
     private int current;
 
     //本地广播接收器
-    private IntentFilter intentFilter;
+    private IntentFilter      intentFilter;
     private BroadcastReceiver localReceiver;
 
 
@@ -86,13 +71,13 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
         intentFilter = new IntentFilter();
         intentFilter.addAction("playMusic");
         localReceiver = new LocalReceiver();
-        registerReceiver(localReceiver,intentFilter);
+        registerReceiver(localReceiver, intentFilter);
     }
 
     class LocalReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context,"received playMusic",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "received playMusic", Toast.LENGTH_SHORT).show();
             play();
         }
     }
@@ -145,8 +130,8 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -170,14 +155,10 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
                 play();
                 break;
             case R.id.iv_next:
-                //MyMusicUtil.playNextMusic(this);
-                MyMusicUtil.playNextMusic(MyApplication.getContext());
+                MyMusicUtil.playNextMusic(this);
                 break;
             case R.id.iv_prev:
                 MyMusicUtil.playPreMusic(this);
-                //MyMusicUtil.playPreMusic(MyApplication.getContext());
-                //AudioManager mAudioManager = (AudioManager)MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
-                //mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,AudioManager.FLAG_SHOW_UI);
                 break;
             case R.id.iv_menu:
                 showPopFormBottom();
@@ -189,7 +170,7 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
     /**
      * 设置播放图片
      */
-    private void initPlayImage(){
+    private void initPlayImage() {
         int status = PlayerManagerReceiver.status;
         switch (status) {
             case MusicConstant.STATUS_STOP:
@@ -278,14 +259,14 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
     /**
      * 设置滑动条背景
      */
-    private void setSeekBarBackground(){
+    private void setSeekBarBackground() {
         try {
-            int progressColor = CustomAttrValueUtil.getAttrColorValue(R.attr.colorPrimary,R.color.colorAccent,this);
+            int progressColor = CustomAttrValueUtil.getAttrColorValue(R.attr.colorPrimary, R.color.colorAccent, this);
             LayerDrawable layerDrawable = (LayerDrawable) seekBar.getProgressDrawable();
-            ScaleDrawable scaleDrawable = (ScaleDrawable)layerDrawable.findDrawableByLayerId(android.R.id.progress);
+            ScaleDrawable scaleDrawable = (ScaleDrawable) layerDrawable.findDrawableByLayerId(android.R.id.progress);
             GradientDrawable drawable = (GradientDrawable) scaleDrawable.getDrawable();
             drawable.setColor(progressColor);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -322,16 +303,16 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
 
     public void showPopFormBottom() {
         PlayingPopWindow playingPopWindow = new PlayingPopWindow(PlayActivity.this);
-        playingPopWindow.showAtLocation(findViewById(R.id.activity_play), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
+        playingPopWindow.showAtLocation(findViewById(R.id.activity_play), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.alpha=0.7f;
+        params.alpha = 0.7f;
         getWindow().setAttributes(params);
 
         playingPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 WindowManager.LayoutParams params = getWindow().getAttributes();
-                params.alpha=1f;
+                params.alpha = 1f;
                 getWindow().setAttributes(params);
             }
         });
@@ -342,6 +323,7 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
         mReceiver = new PlayReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayBarFragment.ACTION_UPDATE_UI_PlAYBAR);
+        intentFilter.addAction(MusicConstant.UPDATE_PLAY_MODE);
         registerReceiver(mReceiver, intentFilter);
     }
 
@@ -350,6 +332,9 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
         }
+        if (localReceiver != null) {
+            unregisterReceiver(localReceiver);
+        }
     }
 
 
@@ -357,7 +342,6 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
         unRegister();
-        unregisterReceiver(localReceiver);
     }
 
 
@@ -369,27 +353,36 @@ public class PlayActivity extends BaseActivity implements View.OnClickListener {
          */
         @Override
         public void onReceive(Context context, Intent intent) {  //根据PlayBar的状态来设置图片
-            initTitle();
-            status = intent.getIntExtra(MusicConstant.STATUS, 0);
-            current = intent.getIntExtra(MusicConstant.KEY_CURRENT, 0);
-            duration = intent.getIntExtra(MusicConstant.KEY_DURATION, 100);
-            switch (status) {  //根据状态来切换图片以及seekBar
-                case MusicConstant.STATUS_STOP:
-                    playImage.setSelected(false);
+            String action = intent.getAction();
+            if (action == null)
+                return;
+            switch (action) {
+                case MusicConstant.UPDATE_PLAY_MODE:
+                    initPlayMode();
                     break;
-                case MusicConstant.STATUS_PLAY:
-                    playImage.setSelected(true);
-                    break;
-                case MusicConstant.STATUS_PAUSE:
-                    playImage.setSelected(false);
-                    break;
-                case MusicConstant.STATUS_RUN:
-                    playImage.setSelected(true);
-                    seekBar.setMax(duration);
-                    seekBar.setProgress(current);
-                    break;
-                default:
-                    break;
+                case PlayBarFragment.ACTION_UPDATE_UI_PlAYBAR:
+                    initTitle();
+                    status = intent.getIntExtra(MusicConstant.STATUS, 0);
+                    current = intent.getIntExtra(MusicConstant.KEY_CURRENT, 0);
+                    duration = intent.getIntExtra(MusicConstant.KEY_DURATION, 100);
+                    switch (status) {  //根据状态来切换图片以及seekBar
+                        case MusicConstant.STATUS_STOP:
+                            playImage.setSelected(false);
+                            break;
+                        case MusicConstant.STATUS_PLAY:
+                            playImage.setSelected(true);
+                            break;
+                        case MusicConstant.STATUS_PAUSE:
+                            playImage.setSelected(false);
+                            break;
+                        case MusicConstant.STATUS_RUN:
+                            playImage.setSelected(true);
+                            seekBar.setMax(duration);
+                            seekBar.setProgress(current);
+                            break;
+                        default:
+                            break;
+                    }
             }
         }
     }

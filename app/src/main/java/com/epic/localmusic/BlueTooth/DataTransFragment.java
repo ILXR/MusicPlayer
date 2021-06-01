@@ -44,20 +44,20 @@ public class DataTransFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         connectNameTv = (TextView) view.findViewById(R.id.device_name_tv);
         showDataLv = (ListView) view.findViewById(R.id.show_data_lv);
-        inputEt = (EditText) view.findViewById(R.id.input_et);
-        sendBt = (Button) view.findViewById(R.id.send_bt);
-        sendBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String msgSend = inputEt.getText().toString();
-                Message message = new Message();
-                message.what = EpicParams.MSG_WRITE_DATA;
-                message.obj = msgSend;
-                uiHandler.sendMessage(message);
-
-                inputEt.setText("");
-            }
-        });
+        //inputEt = (EditText) view.findViewById(R.id.input_et);
+        //sendBt = (Button) view.findViewById(R.id.send_bt);
+        //sendBt.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //        String msgSend = inputEt.getText().toString();
+        //        Message message = new Message();
+        //        message.what = EpicParams.MSG_WRITE_DATA;
+        //        message.obj = msgSend;
+        //        uiHandler.sendMessage(message);
+        //
+        //        inputEt.setText("");
+        //    }
+        //});
 
         dataListAdapter = new ArrayAdapter<String>(getContext(), R.layout.layout_item_new_data);
         showDataLv.setAdapter(dataListAdapter);

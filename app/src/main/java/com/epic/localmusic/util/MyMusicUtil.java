@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
@@ -30,16 +32,26 @@ import java.util.Map;
 
 public class MyMusicUtil {
 
-    private static final String TAG = MyMusicUtil.class.getName();
+    private static final String  TAG          = MyMusicUtil.class.getName();
+    private static final Handler handlerThree = new Handler(Looper.getMainLooper());
+
+    // 全局显示Toast
+    public static void showToast(final String msg) {
+        handlerThree.post(new Runnable() {
+            public void run() {
+                Toast.makeText(MyApplication.getContext(), msg, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     /**
      * 获取当前播放的列表
      */
-    public static List<MusicInfo> getCurrentPlayList(Context context){
+    public static List<MusicInfo> getCurrentPlayList(Context context) {
         DBManager dbManager = DBManager.getInstance(context);
         int playList = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_LIST);
         List<MusicInfo> musicInfoList = new ArrayList<>();
-        switch (playList){
+        switch (playList) {
             case MusicConstant.LIST_ALLMUSIC:  //所有音乐
                 musicInfoList = dbManager.getAllMusicFromMusicTable();
                 break;
@@ -55,25 +67,25 @@ public class MyMusicUtil {
                 break;
             case MusicConstant.LIST_SINGER:  //歌手
                 String singerName = MyMusicUtil.getStringSharedPreference(MusicConstant.KEY_LIST_ID);
-                if (singerName == null){
+                if (singerName == null) {
                     musicInfoList = dbManager.getAllMusicFromMusicTable();
-                }else {
+                } else {
                     musicInfoList = dbManager.getMusicListBySinger(singerName);
                 }
                 break;
             case MusicConstant.LIST_ALBUM:  //专辑
                 String albumName = MyMusicUtil.getStringSharedPreference(MusicConstant.KEY_LIST_ID);
-                if (albumName == null){
+                if (albumName == null) {
                     musicInfoList = dbManager.getAllMusicFromMusicTable();
-                }else {
+                } else {
                     musicInfoList = dbManager.getMusicListByAlbum(albumName);
                 }
                 break;
             case MusicConstant.LIST_FOLDER:  //文件夹
                 String folderName = MyMusicUtil.getStringSharedPreference(MusicConstant.KEY_LIST_ID);
-                if (folderName == null){
+                if (folderName == null) {
                     musicInfoList = dbManager.getAllMusicFromMusicTable();
-                }else {
+                } else {
                     musicInfoList = dbManager.getMusicListByFolder(folderName);
                 }
                 break;
@@ -85,31 +97,31 @@ public class MyMusicUtil {
     /**
      * 播放下一首音乐
      */
-    public static void playNextMusic(Context context){
+    public static void playNextMusic(Context context) {
         //获取下一首ID
         DBManager dbManager = DBManager.getInstance(context);
         int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
         int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
         List<MusicInfo> musicList = getCurrentPlayList(context);
         ArrayList<Integer> musicIdList = new ArrayList<>();
-        for (MusicInfo info : musicList){
+        for (MusicInfo info : musicList) {
             musicIdList.add(info.getId());
         }
-        musicId = dbManager.getNextMusic(musicIdList,musicId,playMode);
-        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID,musicId);
+        musicId = dbManager.getNextMusic(musicIdList, musicId, playMode);
+        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID, musicId);
         if (musicId == -1) {
             Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
             intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
             context.sendBroadcast(intent);
-            Toast.makeText(context, "歌曲不存在",Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "歌曲不存在", Toast.LENGTH_LONG).show();
             return;
         }
 
         //获取播放歌曲路径
         String path = dbManager.getMusicPath(musicId);
-        Log.d(TAG,"next path ="+path);
+        Log.d(TAG, "next path =" + path);
         //发送播放请求
-        Log.d(TAG,"next  id = "+musicId+"path = "+ path);
+        Log.d(TAG, "next  id = " + musicId + "path = " + path);
         Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
         intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_PLAY);
         intent.putExtra(MusicConstant.KEY_PATH, path);
@@ -120,22 +132,22 @@ public class MyMusicUtil {
     /**
      * 播放前一首歌曲
      */
-    public static void playPreMusic(Context context){
+    public static void playPreMusic(Context context) {
         DBManager dbManager = DBManager.getInstance(context);
         int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
         int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);  //得到当前播放音乐id
         List<MusicInfo> musicList = getCurrentPlayList(context);  //得到当前播放列表
         ArrayList<Integer> musicIdList = new ArrayList<>();
-        for (MusicInfo musicInfo : musicList){
+        for (MusicInfo musicInfo : musicList) {
             musicIdList.add(musicInfo.getId());
         }
-        musicId = dbManager.getPreMusic(musicIdList,musicId,playMode);
-        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID,musicId);
+        musicId = dbManager.getPreMusic(musicIdList, musicId, playMode);
+        MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_ID, musicId);
         if (musicId == -1) {
             Intent intent = new Intent(MusicPlayerService.PLAYER_MANAGER_ACTION);
             intent.putExtra(MusicConstant.COMMAND, MusicConstant.COMMAND_STOP);
             context.sendBroadcast(intent);
-            Toast.makeText(context, "歌曲不存在",Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "歌曲不存在", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -147,9 +159,9 @@ public class MyMusicUtil {
     }
 
 
-    public static void setMusicMylove(Context context,int musicId){
-        if (musicId == -1){
-            Toast.makeText(context, "歌曲不存在",Toast.LENGTH_LONG).show();
+    public static void setMusicMyLove(Context context, int musicId) {
+        if (musicId == -1) {
+            Toast.makeText(context, "歌曲不存在", Toast.LENGTH_LONG).show();
             return;
         }
         DBManager dbManager = DBManager.getInstance(context);
@@ -157,8 +169,7 @@ public class MyMusicUtil {
     }
 
     //设置--铃声的具体方法
-    public static void setMyRingtone(Context context)
-    {
+    public static void setMyRingtone(Context context) {
         DBManager dbManager = DBManager.getInstance(context);
         int musicId = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID);
         String path = dbManager.getMusicPath(musicId);
@@ -175,14 +186,14 @@ public class MyMusicUtil {
         Uri uri = MediaStore.Audio.Media.getContentUriForPath(sdfile.getAbsolutePath());
         Uri newUri = context.getContentResolver().insert(uri, values);
         RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, newUri);
-        Toast.makeText( context,"设置来电铃声成功！", Toast.LENGTH_SHORT ).show();
+        Toast.makeText(context, "设置来电铃声成功！", Toast.LENGTH_SHORT).show();
     }
 
     /**
      * 存储int型
      */
-    public static void setIntSharedPreference(String key, int value){
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music",MyApplication.getContext().MODE_PRIVATE);
+    public static void setIntSharedPreference(String key, int value) {
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", MyApplication.getContext().MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(key, value);
         editor.commit();
@@ -191,8 +202,8 @@ public class MyMusicUtil {
     /**
      * 存储String型
      */
-    public static void setStringSharedPreference(String key, String value){
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music",MyApplication.getContext().MODE_PRIVATE);
+    public static void setStringSharedPreference(String key, String value) {
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", MyApplication.getContext().MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(key, value);
         editor.commit();
@@ -204,10 +215,9 @@ public class MyMusicUtil {
     public static int getIntSharedPreference(String key) {
         SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", MyApplication.getContext().MODE_PRIVATE);
         int value;
-        if (key.equals(MusicConstant.KEY_CURRENT)){  //current
+        if (key.equals(MusicConstant.KEY_CURRENT)) {  //current
             value = pref.getInt(key, 0);
-        }
-        else{
+        } else {
             value = pref.getInt(key, -1);
         }
         return value;
@@ -217,7 +227,7 @@ public class MyMusicUtil {
     public static String getStringSharedPreference(String key) {
         SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", MyApplication.getContext().MODE_PRIVATE);
         String value;
-        value = pref.getString(key,null);
+        value = pref.getString(key, null);
         return value;
     }
 
@@ -239,7 +249,7 @@ public class MyMusicUtil {
             }
         }
 
-        for (Map.Entry<String,List<MusicInfo>> entry : musicMap.entrySet()) {  //遍历
+        for (Map.Entry<String, List<MusicInfo>> entry : musicMap.entrySet()) {  //遍历
             System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
             SingerInfo singerInfo = new SingerInfo();
             singerInfo.setName(entry.getKey());
@@ -267,7 +277,7 @@ public class MyMusicUtil {
             }
         }
 
-        for (Map.Entry<String,List<MusicInfo>> entry : musicMap.entrySet()) {
+        for (Map.Entry<String, List<MusicInfo>> entry : musicMap.entrySet()) {
             AlbumInfo albumInfo = new AlbumInfo();
             albumInfo.setName(entry.getKey());
             albumInfo.setSinger(entry.getValue().get(0).getSinger());
@@ -296,7 +306,7 @@ public class MyMusicUtil {
             }
         }
 
-        for (Map.Entry<String,List<MusicInfo>> entry : musicMap.entrySet()) {
+        for (Map.Entry<String, List<MusicInfo>> entry : musicMap.entrySet()) {
             System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
             FolderInfo folderInfo = new FolderInfo();
             File file = new File(entry.getKey());
@@ -350,7 +360,7 @@ public class MyMusicUtil {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences(MusicConstant.THEME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =  sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("night", mode).commit();
     }
 
@@ -359,21 +369,21 @@ public class MyMusicUtil {
      * 得到是否是夜间模式
      */
     public static boolean getNightMode(Context context) {
-       SharedPreferences sharedPreferences = context.getSharedPreferences(MusicConstant.THEME,Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("night",false);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(MusicConstant.THEME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean("night", false);
     }
 
 
     /**
      * 存储bing图片
      */
-    public static void setBingSharedPreference(String value){
+    public static void setBingSharedPreference(String value) {
         /*
         SharedPreferences是一种轻量级的数据存储方式，采用键值对的存储方式。
         SharedPreferences只能存储少量数据，大量数据不能使用该方式存储，支持存储的数据类型有booleans, floats, ints, longs, and strings。
         SharedPreferences存储到一个XML文件中的，路径在/data/data/<packagename>/shared_prefs/下
          */
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("bing_pic",MyApplication.getContext().MODE_PRIVATE);
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("bing_pic", MyApplication.getContext().MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("pic", value);
         editor.commit();
@@ -385,16 +395,16 @@ public class MyMusicUtil {
      */
     public static String getBingSharedPreference() {
         SharedPreferences pref = MyApplication.getContext().getSharedPreferences("bing_pic", MyApplication.getContext().MODE_PRIVATE);
-        String value = pref.getString("pic",null);
+        String value = pref.getString("pic", null);
         return value;
     }
 
     /**
      * 判断是否是第一次启动
      */
-    public static boolean getIsFirst(){
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("is_first",MyApplication.getContext().MODE_PRIVATE);
-        Boolean value = pref.getBoolean("is_first",true);
+    public static boolean getIsFirst() {
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("is_first", MyApplication.getContext().MODE_PRIVATE);
+        Boolean value = pref.getBoolean("is_first", true);
         return value;
     }
 
@@ -402,13 +412,12 @@ public class MyMusicUtil {
     /**
      * 存储第一次扫描
      */
-    public static void setIsFirst(Boolean isFirst){
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("is_first",MyApplication.getContext().MODE_PRIVATE);
+    public static void setIsFirst(Boolean isFirst) {
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("is_first", MyApplication.getContext().MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean("is_first",isFirst);
+        editor.putBoolean("is_first", isFirst);
         editor.commit();
     }
-
 
 
 }

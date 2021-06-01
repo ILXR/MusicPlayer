@@ -260,7 +260,7 @@ public class ModelActivity extends PlayBarBaseActivity {
 
     public void showPopFormBottom(MusicInfo musicInfo) {
         MusicPopMenuWindow menuPopupWindow = new MusicPopMenuWindow(ModelActivity.this, musicInfo, findViewById(R.id.activity_model), MusicConstant.ACTIVITY_LOCAL);
-//      设置Popupwindow显示位置（从底部弹出）
+        //      设置Popupwindow显示位置（从底部弹出）
         menuPopupWindow.showAtLocation(findViewById(R.id.activity_model), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         WindowManager.LayoutParams params = ModelActivity.this.getWindow().getAttributes();
         //当弹出Popupwindow时，背景变半透明
@@ -307,9 +307,10 @@ public class ModelActivity extends PlayBarBaseActivity {
             }
             mReceiver = new UpdateReceiver();
             IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(MusicConstant.UPDATE_PLAY_MODE);
             intentFilter.addAction(PlayerManagerReceiver.ACTION_UPDATE_UI_ADAPTER);
             this.registerReceiver(mReceiver, intentFilter);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -319,16 +320,26 @@ public class ModelActivity extends PlayBarBaseActivity {
             if (mReceiver != null) {
                 this.unregisterReceiver(mReceiver);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private class UpdateReceiver extends BroadcastReceiver{
+    private class UpdateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            adapter.notifyDataSetChanged();
-            Toast.makeText(context, "ModeActivity!!!", Toast.LENGTH_SHORT).show();
+            String action = intent.getAction();
+            if (action == null)
+                return;
+            switch (action) {
+                case MusicConstant.UPDATE_PLAY_MODE:
+                    initPlayMode();
+                    break;
+                case PlayerManagerReceiver.ACTION_UPDATE_UI_ADAPTER:
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(context, "ModeActivity!!!", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
     }
 
@@ -347,17 +358,18 @@ public class ModelActivity extends PlayBarBaseActivity {
 
         private OnItemClickListener onItemClickListener;
 
-        public ModelAdapter() {}
+        public ModelAdapter() {
+        }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            View swipeContent;
+            View         swipeContent;
             LinearLayout contentLayout;
-            TextView musicIndex;
-            TextView musicName;
-            TextView musicSinger;
-            TextView letterIndex;
-            ImageView menuImage;
-            Button deleteButton;
+            TextView     musicIndex;
+            TextView     musicName;
+            TextView     musicSinger;
+            TextView     letterIndex;
+            ImageView    menuImage;
+            Button       deleteButton;
 
 
             public ViewHolder(View itemView) {
@@ -432,11 +444,11 @@ public class ModelActivity extends PlayBarBaseActivity {
             int defaultTvColor = typed.getColor(0, getResources().getColor(R.color.grey700));
             typedArray.recycle();
 
-            if (musicInfo.getId() == MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID)){
+            if (musicInfo.getId() == MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_ID)) {
                 holder.musicName.setTextColor(appbg);
                 holder.musicIndex.setTextColor(appbg);
                 holder.musicSinger.setTextColor(appbg);
-            }else {
+            } else {
                 holder.musicName.setTextColor(defaultTvColor);
                 holder.musicIndex.setTextColor(getResources().getColor(R.color.grey700));
                 holder.musicSinger.setTextColor(getResources().getColor(R.color.grey700));

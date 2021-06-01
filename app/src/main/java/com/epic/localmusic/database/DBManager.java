@@ -509,14 +509,13 @@ public class DBManager {
         // 如果当前是最后一首
         switch (playMode) {
             case MusicConstant.PLAYMODE_SEQUENCE:
+            case MusicConstant.PLAYMODE_SINGLE_REPEAT:
                 if ((index + 1) == musicList.size()) {
                     id = musicList.get(0);
                 } else {
                     ++index;
                     id = musicList.get(index);
                 }
-                break;
-            case MusicConstant.PLAYMODE_SINGLE_REPEAT:
                 break;
             case MusicConstant.PLAYMODE_RANDOM:
                 id = getRandomMusic(musicList, id);

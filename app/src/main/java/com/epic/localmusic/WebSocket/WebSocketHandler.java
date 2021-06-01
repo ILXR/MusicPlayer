@@ -9,13 +9,10 @@ import com.epic.localmusic.util.EpicParams.ConnectStatus;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
-//import org.json.JSONObject;
 import com.alibaba.fastjson.JSONObject;
 import com.epic.localmusic.util.MusicConstant;
 import com.epic.localmusic.util.MyApplication;
@@ -51,6 +48,8 @@ public class WebSocketHandler extends WebSocketListener {
 
     private static WebSocketHandler Instance;
 
+    private AudioManager mAudioManager;
+
     MockWebServer mockWebServer;
 
     //控制音乐播放的本地广播
@@ -58,10 +57,13 @@ public class WebSocketHandler extends WebSocketListener {
 
     public WebSocketHandler() {
         this.webSocketURL = EpicParams.WS_SERVER_URL;
+        // 获取系统音量管理器
+        mAudioManager = (AudioManager) MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
     }
 
     public WebSocketHandler(String webSocketURL) {
         this.webSocketURL = webSocketURL;
+        mAudioManager = (AudioManager) MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
     }
 
     public static WebSocketHandler getInstance() {
@@ -192,6 +194,7 @@ public class WebSocketHandler extends WebSocketListener {
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
         Log.i(TAG, "onOpen: ");
+        MyMusicUtil.showToast("服务器连接成功");
         this.status = ConnectStatus.Open;
     }
 
@@ -200,11 +203,9 @@ public class WebSocketHandler extends WebSocketListener {
         super.onMessage(webSocket, text);
         Log.i(TAG, "onMessage: " + text);
 
-
         // TODO 处理服务器返回的操控命令
         //数据格式 {'actindex': 4, 'actname': 'QP'}
-        // 获取系统音量管理器
-        AudioManager mAudioManager = (AudioManager) MyApplication.getContext().getSystemService(Context.AUDIO_SERVICE);
+
         // 解析json数据
         JSONObject json = JSONObject.parseObject(text);
         int actIndex = json.getInteger("actindex");
@@ -212,26 +213,31 @@ public class WebSocketHandler extends WebSocketListener {
             case 0:
                 // TODO 音量加
                 Log.i(TAG, "onMessage: 音量加");
+                MyMusicUtil.showToast("音量增大");
                 mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
                 break;
             case 1:
                 // TODO 音量减
                 Log.i(TAG, "onMessage: 音量减");
+                MyMusicUtil.showToast("音量减小");
                 mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
                 break;
             case 2:
                 // TODO 播放/暂停
                 Log.i(TAG, "onMessage: 播放暂停");
+                MyMusicUtil.showToast("播放/暂停");
                 MyApplication.getInstance().play();
                 break;
             case 3:
                 // TODO 下一首
-                Log.i(TAG, "onMessage: 切切歌");
+                Log.i(TAG, "onMessage: 切歌");
+                MyMusicUtil.showToast("下一首");
                 MyMusicUtil.playNextMusic(MyApplication.getContext());
                 break;
             case 4:
                 // TODO 播放列表模式
                 Log.i(TAG, "onMessage: 播放列表模式");
+                MyMusicUtil.showToast("切换播放模式");
                 int playMode = MyMusicUtil.getIntSharedPreference(MusicConstant.KEY_MODE);
                 if (playMode == MusicConstant.PLAYMODE_RANDOM)
                     MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SINGLE_REPEAT);
@@ -239,10 +245,9 @@ public class WebSocketHandler extends WebSocketListener {
                     MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_SEQUENCE);
                 else
                     MyMusicUtil.setIntSharedPreference(MusicConstant.KEY_MODE, MusicConstant.PLAYMODE_RANDOM);
+                MyApplication.getInstance().sendBroadCast(MusicConstant.UPDATE_PLAY_MODE);
                 break;
-
         }
-
     }
 
     @Override
@@ -270,6 +275,7 @@ public class WebSocketHandler extends WebSocketListener {
         Log.i(TAG, "onFailure: " + t.toString());
         t.printStackTrace();
         this.status = ConnectStatus.Canceled;
+        MyMusicUtil.showToast("服务器连接失败");
         try {
             //断线重连
             Thread.sleep(5000);

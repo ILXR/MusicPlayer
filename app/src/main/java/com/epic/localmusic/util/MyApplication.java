@@ -3,6 +3,7 @@ package com.epic.localmusic.util;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.epic.localmusic.WebSocket.WebSocketHandler;
@@ -22,16 +23,26 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        context = getApplicationContext();
         Instance = this;
+        context = getApplicationContext();
         Intent startIntent = new Intent(MyApplication.this, MusicPlayerService.class);
-        startService(startIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(startIntent);
+        } else {
+            startService(startIntent);
+        }
         initNightMode();
         dbManager = DBManager.getInstance(this);
         // TODO 连接服务器
         WebSocketHandler.getInstance().connect();
     }
 
+
+    public void sendBroadCast(String action) {
+        Intent intent = new Intent();
+        intent.setAction(action);
+        sendBroadcast(intent);
+    }
 
     protected void initNightMode() {
         boolean isNight = MyMusicUtil.getNightMode(context);

@@ -135,7 +135,7 @@ public class MusicPopMenuWindow extends PopupWindow{
         loveLayout.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                MyMusicUtil.setMusicMylove(activity,musicInfo.getId());
+                MyMusicUtil.setMusicMyLove(activity,musicInfo.getId());
                 dismiss();
                 View view = LayoutInflater.from(activity).inflate(R.layout.my_love_toast,null);
                 Toast toast = new Toast(activity);

@@ -18,9 +18,10 @@ public class BtDataProcessor {
     private static final String TAG = "BtDataProcessor";
 
     private static       BtDataProcessor Instance;
-    private static final int             WinSize         = 10;
+    private static final int             WinSize         = 30;
     private static final int             DataSize        = 130;
     private static final Double          actionThreshold = 0.3;
+    private static final int             minStrLength    = 50;
 
     private       boolean                       startProcess; // 开始处理
     private       boolean                       startAction; // 开始搜集动作数据
@@ -64,12 +65,19 @@ public class BtDataProcessor {
             List<String> tem = Arrays.asList(str.split(","));
             List<String> temValue = Arrays.asList(tem.get(2).split(" "));
             Double[] param = EpicParams.BtValueParams;
+            boolean isInitial = true;
             for (String s : temValue.subList(0, temValue.size() - 1)) {
                 Double val = Double.parseDouble(s);
+                if (!val.equals(-1.36)) {
+                    isInitial = false;
+                }
                 double res = param[0] * Math.pow(val, 4) + param[1] * Math.pow(val, 3) + param[2] * Math.pow(val, 2) + param[3] * val + param[4];
                 result.add((double) Math.round(res * 100) / 100);
             }
-            return result;
+            if (isInitial) {
+                return null;
+            } else
+                return result;
         } catch (Exception e) {
             Log.e(TAG, "formatString: Error");
             e.printStackTrace();
@@ -116,7 +124,6 @@ public class BtDataProcessor {
                 }
             }
         }
-
     }
 
 
@@ -126,7 +133,7 @@ public class BtDataProcessor {
             String str = bufferLast.substring(0, index).replace("\n", "");
             ArrayList<Double> result;
             bufferLast.delete(0, index);
-            if (str.length() > 8 && (result = formatString(str)) != null && result.size() > 0) {
+            if (str.length() > minStrLength && (result = formatString(str)) != null && result.size() > 0) {
                 return result;
             }
         }

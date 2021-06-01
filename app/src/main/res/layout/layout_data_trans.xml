@@ -23,26 +23,26 @@
         android:textSize="17sp"
         android:textColor="@android:color/black"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="10dp">
+<!--    <LinearLayout-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_margin="10dp">-->
 
-        <EditText
-            android:id="@+id/input_et"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            tools:text="F002 A10D 0A" />
-        <Button
-            android:id="@+id/send_bt"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:text="发送"
-            android:background="@color/biliPink"/>
-    </LinearLayout>
+<!--        <EditText-->
+<!--            android:id="@+id/input_et"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            tools:text="F002 A10D 0A" />-->
+<!--        <Button-->
+<!--            android:id="@+id/send_bt"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:layout_marginBottom="5dp"-->
+<!--            android:layout_width="80dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:text="发送"-->
+<!--            android:background="@color/biliPink"/>-->
+<!--    </LinearLayout>-->
 
 </LinearLayout>
