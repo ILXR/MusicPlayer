@@ -84,7 +84,6 @@ public class DataTransFragment extends Fragment {
      * @param newMsg
      */
     public void updateDataView(String newMsg, int role) {
-
         if (role == EpicParams.REMOTE) {
             String remoteName = remoteDevice.getName() == null ? "未命名设备" : remoteDevice.getName();
             newMsg = remoteName + " : " + newMsg;

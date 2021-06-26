@@ -20,8 +20,8 @@ public class BtDataProcessor {
     private static       BtDataProcessor Instance;
     private static final int             WinSize         = 30;
     private static final int             DataSize        = 130;
-    private static final Double          actionThreshold = 0.3;
-    private static final int             minStrLength    = 50;
+    private static final Double          actionThreshold = 0.1;
+    private static final int             minStrLength    = 20;
 
     private       boolean                       startProcess; // 开始处理
     private       boolean                       startAction; // 开始搜集动作数据
@@ -111,7 +111,7 @@ public class BtDataProcessor {
                 }
                 // 检测异常
                 if (window.size() == WinSize) {
-                    int randIndex = random.nextInt(window.getFirst().size());
+                    int randIndex = random.nextInt(4);
                     if (window.getLast().get(randIndex) - window.getFirst().get(randIndex) > actionThreshold) {
                         while (window.size() > 0) {
                             listToSend.add(window.getFirst());
@@ -146,6 +146,7 @@ public class BtDataProcessor {
         data.put("data", JSONArray.parseArray(JSON.toJSONString(listToSend)));
         Log.i(TAG, "sendDataList: " + data.toJSONString());
         WebSocketHandler.getInstance().send(data.toJSONString());
+        Log.i(TAG, "sendDataList: Finished");
         clear();
     }
 

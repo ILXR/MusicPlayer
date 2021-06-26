@@ -57,7 +57,9 @@ public class BlueToothActivity extends AppCompatActivity {
                     break;
                 case EpicParams.MSG_CLIENT_REV_NEW:
                     String newMsgFromServer = msg.obj.toString();
-                    dataTransFragment.updateDataView(newMsgFromServer, EpicParams.REMOTE);
+                    if(dataTransFragment!=null){
+                        dataTransFragment.updateDataView(newMsgFromServer, EpicParams.REMOTE);
+                    }
                     break;
                 case EpicParams.MSG_WRITE_DATA:
                     String dataSend = msg.obj.toString();

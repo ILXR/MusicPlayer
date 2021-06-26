@@ -63,6 +63,15 @@ public class DeviceListFragment extends Fragment {
             Toast.makeText(mContext, "您的设备未找到蓝牙驱动！", Toast.LENGTH_SHORT).show();
             mContext.finish();
         }
+
+        intentFilter = new IntentFilter();
+        btReceiver = new MyBtReceiver();
+        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        if (mContext != null) {
+            mContext.registerReceiver(btReceiver, intentFilter);
+        }
     }
 
     @Nullable
@@ -98,15 +107,6 @@ public class DeviceListFragment extends Fragment {
         // 蓝牙未打开，询问打开
         if (!bluetoothAdapter.isEnabled()) {
             startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), EpicParams.REQUEST_ENABLE_BT);
-        }
-
-        intentFilter = new IntentFilter();
-        btReceiver = new MyBtReceiver();
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-        if (mContext != null) {
-            mContext.registerReceiver(btReceiver, intentFilter);
         }
 
         // 蓝牙已开启

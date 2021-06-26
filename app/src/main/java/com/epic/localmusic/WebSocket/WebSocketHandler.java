@@ -210,26 +210,26 @@ public class WebSocketHandler extends WebSocketListener {
         JSONObject json = JSONObject.parseObject(text);
         int actIndex = json.getInteger("actindex");
         switch (actIndex) {
-            case 0:
-                // TODO 音量加
+            case 2:
+                // pinch2
                 Log.i(TAG, "onMessage: 音量加");
                 MyMusicUtil.showToast("音量增大");
                 mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
                 break;
             case 1:
-                // TODO 音量减
+                // pinch1
                 Log.i(TAG, "onMessage: 音量减");
                 MyMusicUtil.showToast("音量减小");
                 mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
                 break;
-            case 2:
-                // TODO 播放/暂停
+            case 0:
+                // crab
                 Log.i(TAG, "onMessage: 播放暂停");
                 MyMusicUtil.showToast("播放/暂停");
                 MyApplication.getInstance().play();
                 break;
             case 3:
-                // TODO 下一首
+                // pinch3
                 Log.i(TAG, "onMessage: 切歌");
                 MyMusicUtil.showToast("下一首");
                 MyMusicUtil.playNextMusic(MyApplication.getContext());
