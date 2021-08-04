@@ -1,5 +1,6 @@
 package com.epic.localmusic.BlueTooth;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,10 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -161,10 +164,10 @@ public class DeviceListFragment extends Fragment {
                 if (bluetoothAdapter.isDiscovering()) {
                     bluetoothAdapter.cancelDiscovery();
                 }
-                //if (Build.VERSION.SDK_INT >= 6.0) {
-                //    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                //            Params.MY_PERMISSION_REQUEST_CONSTANT);
-                //}
+                if (Build.VERSION.SDK_INT >= 6.0) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
+                            EpicParams.MY_PERMISSION_REQUEST_CONSTANT);
+                }
                 bluetoothAdapter.startDiscovery();
                 break;
             case R.id.disconnect:
