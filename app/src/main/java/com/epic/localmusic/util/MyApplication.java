@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatDelegate;
 
-import com.epic.localmusic.WebSocket.WebSocketHandler;
 import com.epic.localmusic.database.DBManager;
 import com.epic.localmusic.receiver.PlayerManagerReceiver;
 import com.epic.localmusic.service.MusicPlayerService;
@@ -33,8 +32,6 @@ public class MyApplication extends Application {
         }
         initNightMode();
         dbManager = DBManager.getInstance(this);
-        // TODO 连接服务器
-        WebSocketHandler.getInstance().connect();
     }
 
 

@@ -110,7 +110,7 @@ public class BlueToothManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        BlueToothDataManager.getInstance().init(4);
         bluetoothThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -133,14 +133,14 @@ public class BlueToothManager {
                         if ((len = inStream.read(buffer)) != -1) {
                             content = new String(buffer, 0, len);
                             sendUiMsg(EpicParams.MSG_CLIENT_REV_NEW, content);
-                            BtDataProcessor.getInstance().processString(content);
+                            BlueToothDataManager.getInstance().processString(content);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                         break;
                     }
                 }
-                BtDataProcessor.getInstance().endProcess();
+                //BtDataProcessor.getInstance().endProcess();
             }
         });
         bluetoothThread.start();

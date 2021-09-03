@@ -80,7 +80,6 @@ public class BlueToothActivity extends AppCompatActivity {
                             public void run() {
                                 Log.i(TAG, "发送STARTCODE");
                                 BlueToothManager.getInstance().sendByteArray(EpicParams.START_BYTE_ARRAY);
-                                BtDataProcessor.getInstance().startProcess();
                             }
                         }, 1000);
                         break;
