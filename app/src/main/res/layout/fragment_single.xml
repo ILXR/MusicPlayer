@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,7 +11,8 @@
         android:layout_below="@id/local_viewPager"
         android:gravity="center_vertical"
         android:clickable="true"
-        android:background="?attr/appbg">
+        android:background="?attr/appbg"
+        tools:ignore="NotSibling">
         <ImageView
             android:id="@+id/local_music_playmode_iv"
             android:layout_width="50dp"
@@ -33,7 +35,7 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:layout_below="@id/local_music_playmode_rl"/>
-    <com.epic.localmusic.view.SideBar
+    <com.epic.localmusicnoserver.view.SideBar
         android:id="@+id/local_music_siderbar"
         android:layout_width="200dp"
         android:layout_height="match_parent"

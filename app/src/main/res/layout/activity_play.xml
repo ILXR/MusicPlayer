@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@drawable/bg_play"
-    tools:activity="com.epic.localmusic.activity.PlayActivity">
+    tools:activity="com.epic.localmusicnoserver.activity.PlayActivity">
 
     <!--<ImageView-->
         <!--android:id="@+id/iv_play_page_bg"-->

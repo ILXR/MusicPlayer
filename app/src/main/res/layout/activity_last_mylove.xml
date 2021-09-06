@@ -4,7 +4,7 @@
     android:id="@+id/activity_last_mylove"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:activity="com.epic.localmusic.activity.LastMyloveActivity">
+    tools:activity="com.epic.localmusicnoserver.activity.LastMyloveActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/last_mylove_toolbar"
         android:layout_width="match_parent"
@@ -47,7 +47,7 @@
         android:scrollbars="vertical"
         android:layout_below="@id/last_mylove_playmode_rl"
         android:layout_above="@id/fragment_playbar"/>
-    <com.epic.localmusic.view.SideBar
+    <com.epic.localmusicnoserver.view.SideBar
         android:id="@+id/last_mylove_music_siderbar"
         android:layout_width="200dp"
         android:layout_height="match_parent"
