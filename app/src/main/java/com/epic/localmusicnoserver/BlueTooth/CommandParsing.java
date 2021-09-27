@@ -53,6 +53,17 @@ public class CommandParsing {
     public ActionType commandParseNew(ArrayList<Double> maxValues) {
         if (maxValues.size() != 4)
             return null;
+        Double max = Collections.max(maxValues);
+        if (max >= crabThreshold)
+            return ActionType.Crab;
+        Double v1 = maxValues.get(0), v2 = maxValues.get(1), v3 = maxValues.get(2), v4 = maxValues.get(3);
+        if (v1 >= v4 && v4 >= Math.max(v3, v2)) {
+            return ActionType.Touch1;
+        } else if (v1 >= v3 && v3 >= v4 && v4 >= v2) {
+            return ActionType.Touch2;
+        } else if (v4 >= v2 && v2 >= Math.max(v1, v3)) {
+            return ActionType.Touch3;
+        }
         return null;
     }
 
@@ -98,7 +109,13 @@ public class CommandParsing {
     private void actionNextMusic() {
         Log.i(TAG, "onMessage: 切歌");
         MyMusicUtil.showToast("下一首");
-        MyMusicUtil.playNextMusic(MyApplication.getContext());
+        new Runnable(){
+            @Override
+            public void run() {
+                MyMusicUtil.playNextMusic(MyApplication.getContext());
+            }
+        }.run();
+
     }
 
     private void actionChangeMode() {

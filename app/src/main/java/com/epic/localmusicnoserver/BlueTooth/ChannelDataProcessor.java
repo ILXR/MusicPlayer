@@ -1,5 +1,7 @@
 package com.epic.localmusicnoserver.BlueTooth;
 
+import android.util.Log;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
@@ -7,9 +9,9 @@ public class ChannelDataProcessor {
     private static final String TAG = "ChannelDataProcessor";
 
     // algorithm params
-    private static final Double  startActionThreshold = 0.125d;
+    private static final Double  startActionThreshold = 0.12d;
     private static final Integer minActionSize        = 20;
-    private static final int     rollingMeanSize      = 10;
+    private static final int     rollingMeanSize      = 5;
     private static final int     initSize             = 100;
 
     private       Double             meanValue;
@@ -73,6 +75,8 @@ public class ChannelDataProcessor {
         } else {
             meanValue = (meanValue * size + data) / (size + 1);
         }
+        if (meanValue > 0.12d)
+            Log.i(TAG, "addDataToQueue: " + meanValue);
         cacheQueue.addLast(data);
     }
 
@@ -85,7 +89,7 @@ public class ChannelDataProcessor {
         }
         if (meanValue > startActionThreshold && !inAction)
             inAction = true;
-        if (meanValue < startActionThreshold && inAction) {
+        if (meanValue <= startActionThreshold && inAction) {
             inAction = false;
             if (actionSize >= minActionSize) {
                 actionValid = true;

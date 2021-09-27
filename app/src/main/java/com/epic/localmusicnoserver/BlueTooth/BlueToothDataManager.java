@@ -110,24 +110,23 @@ public class BlueToothDataManager {
                 }
                 boolean tem = anyInAction();
                 if (tem && !anyInAction) {
-                    // TODO Action 开始
                     anyInAction = true;
                     startRecord();
                     Log.i(TAG, "processString: Action Start");
                 } else if (!tem && anyInAction) {
-
                     Log.i(TAG, "processString: Action End");
                     if (anyActionValid()) {
                         Log.i(TAG, "processString: Valid Data");
                         ArrayList<Double> maxValues = new ArrayList<>();
                         for (ChannelDataProcessor channel : channelManagers) {
                             maxValues.add(channel.getMaxActionValue());
-                            CommandParsing.ActionType type = CommandParsing.getInstance().commandParseOld(maxValues);
+                            //  TODO 不同的数据识别算法
+                            //CommandParsing.ActionType type = CommandParsing.getInstance().commandParseOld(maxValues);
+                            CommandParsing.ActionType type = CommandParsing.getInstance().commandParseNew(maxValues);
                             if (type != null)
                                 CommandParsing.getInstance().act(type);
-                            Log.i(TAG, "processString: channel max data - "+channel.getMaxActionValue());
+                            Log.i(TAG, "processString: channel max data - " + channel.getMaxActionValue());
                         }
-                        // TODO Action 结束,判断动作类型
                     } else {
                         Log.i(TAG, "processString: invalid Data");
                     }
@@ -149,8 +148,6 @@ public class BlueToothDataManager {
                 if (!val.equals(-1.36d)) {
                     isInitial = false;
                 }
-                //double res = param[0] * Math.pow(val, 4) + param[1] * Math.pow(val, 3) + param[2] * Math.pow(val, 2) + param[3] * val + param[4];
-                //result.add(Math.round(res * 100) / 100d);
                 result.add(val);
             }
             if (isInitial) {

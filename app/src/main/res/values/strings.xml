@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">听听音乐本地版</string>
+    <!-- TODO app名称-->
+    <string name="app_name">Hair2</string>
     <string name="local_music">本地音乐</string>
     <string name="last_play">最近播放</string>
     <string name="scan_music">扫描音乐</string>
@@ -7,7 +8,4 @@
     <string name="about">关于</string>
     <string name="version_name">当前版本 </string>
     <string name="can_not_find_version_name">寻找当前版本出错</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
