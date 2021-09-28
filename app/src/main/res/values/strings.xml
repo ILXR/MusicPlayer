@@ -1,6 +1,6 @@
 <resources>
     <!-- TODO app名称-->
-    <string name="app_name">Hair1</string>
+    <string name="app_name">Hair2</string>
     <string name="local_music">本地音乐</string>
     <string name="last_play">最近播放</string>
     <string name="scan_music">扫描音乐</string>

@@ -121,8 +121,8 @@ public class BlueToothDataManager {
                         for (ChannelDataProcessor channel : channelManagers) {
                             maxValues.add(channel.getMaxActionValue());
                             //  TODO 不同的数据识别算法
-                            CommandParsing.ActionType type = CommandParsing.getInstance().commandParseOld(maxValues);
-                            //CommandParsing.ActionType type = CommandParsing.getInstance().commandParseNew(maxValues);
+                            //CommandParsing.ActionType type = CommandParsing.getInstance().commandParseOld(maxValues);
+                            CommandParsing.ActionType type = CommandParsing.getInstance().commandParseNew(maxValues);
                             if (type != null)
                                 CommandParsing.getInstance().act(type);
                             Log.i(TAG, "processString: channel max data - " + channel.getMaxActionValue());
