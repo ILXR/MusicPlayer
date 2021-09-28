@@ -13,8 +13,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.epic.localmusicnoserver.R;
+import com.epic.localmusicnoserver.activity.BaseActivity;
 import com.epic.localmusicnoserver.util.EpicParams;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class BlueToothActivity extends AppCompatActivity {
+public class BlueToothActivity extends BaseActivity{
 
     final String TAG = "BlueToothActivity";
 
@@ -109,8 +111,10 @@ public class BlueToothActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_bluetooth);
         initUI();
+        Toolbar bar = findViewById(R.id.toolBar);
+        setSupportActionBar(bar);
     }
 
 

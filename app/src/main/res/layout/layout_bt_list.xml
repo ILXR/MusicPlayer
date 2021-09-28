@@ -11,7 +11,7 @@
         android:layout_marginTop="1dp"
         android:text="选择一个设备连接"
         android:gravity="center"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:background="?attr/colorPrimary"/>
 
     <TextView

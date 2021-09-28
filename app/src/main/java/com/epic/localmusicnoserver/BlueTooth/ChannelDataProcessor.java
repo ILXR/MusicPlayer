@@ -75,8 +75,8 @@ public class ChannelDataProcessor {
         } else {
             meanValue = (meanValue * size + data) / (size + 1);
         }
-        if (meanValue > 0.12d)
-            Log.i(TAG, "addDataToQueue: " + meanValue);
+        //if (meanValue > 0.12d)
+        //    Log.i(TAG, "addDataToQueue: " + meanValue);
         cacheQueue.addLast(data);
     }
 

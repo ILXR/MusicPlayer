@@ -9,10 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="1dp"
-        android:background="@color/biliPink"
+        android:background="?attr/colorPrimary"
         android:gravity="center"
         android:text="还未连接任何设备"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/white" />
 
     <ListView
         android:id="@+id/show_data_lv"
