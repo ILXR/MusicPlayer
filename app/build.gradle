@@ -7,7 +7,7 @@ android {
 
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.epic.localmusicnoserver"
+        applicationId "com.epic.localmusichair2"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 2
