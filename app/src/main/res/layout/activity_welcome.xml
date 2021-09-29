@@ -22,7 +22,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:contentDescription="@null"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/music_app" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:gravity="bottom"
-                    android:text="没事的时候"
+                    android:text="音乐随身听"
                     android:textColor="#999999"
                     android:textSize="16sp" />
 

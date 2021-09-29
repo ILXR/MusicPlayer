@@ -22,7 +22,8 @@
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:src="@mipmap/ic_launcher" />
+            android:tint="?attr/image_tint"
+            android:src="@mipmap/music_app"/>
 
         <TextView
             android:id="@+id/about_version"

@@ -1,7 +1,9 @@
 package com.epic.localmusicnoserver.BlueTooth;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +18,8 @@ import android.widget.Toast;
 
 import com.epic.localmusicnoserver.R;
 import com.epic.localmusicnoserver.activity.BaseActivity;
+import com.epic.localmusicnoserver.fragment.DataTransFragment;
+import com.epic.localmusicnoserver.fragment.DeviceListFragment;
 import com.epic.localmusicnoserver.util.EpicParams;
 
 import java.util.ArrayList;
@@ -114,8 +118,29 @@ public class BlueToothActivity extends BaseActivity {
         initUI();
         Toolbar bar = findViewById(R.id.toolBar);
         setSupportActionBar(bar);
+        checkBTPermission();
     }
 
+    private void checkBTPermission() {
+        Log.d(TAG, "checkBTPermission: Start");
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            int permissionCheck = 0;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                permissionCheck = this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+                permissionCheck += this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+                if (permissionCheck != 0) {
+                    this.requestPermissions(new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    }, 1001); //any number
+                } else {
+                    Log.d(TAG,
+                            "checkBTPermissions: No need to check permissions.");
+                }
+            }
+        }
+        Log.d(TAG, "checkBTPermission: Finish");
+    }
 
     /**
      * 返回 uiHandler

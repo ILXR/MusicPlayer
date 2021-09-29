@@ -20,7 +20,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerInParent="true"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/music_app" />
 
         <TextView
             android:id="@+id/nav_title_tv"
