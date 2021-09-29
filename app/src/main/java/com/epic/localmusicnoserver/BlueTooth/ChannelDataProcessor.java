@@ -1,9 +1,7 @@
 package com.epic.localmusicnoserver.BlueTooth;
 
-import android.util.Log;
-
 import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.util.Deque;
 
 public class ChannelDataProcessor {
     private static final String TAG = "ChannelDataProcessor";
@@ -12,26 +10,26 @@ public class ChannelDataProcessor {
     private static final Double  startActionThreshold = 0.12d;
     private static final Integer minActionSize        = 20;
     private static final int     rollingMeanSize      = 5;
-    private static final int     initSize             = 100;
+    private static final int     initSize             = 120;
+    private static final double  stableThreshold      = 0.08d;
 
-    private       Double             meanValue;
-    private final ArrayDeque<Double> cacheQueue;
-    private       ArrayList<Double>  initArray;
-
-    private boolean startRecordValue;
-    private boolean hasInit;
-    private boolean inAction;
-    private boolean actionValid;
-    private int     actionSize;
-    private Double  maxActionValue;
-    private Double  baseLine;
+    private final Deque<Double> cacheQueue;
+    private final Deque<Double> baselineQue;
+    private       Double        meanValue;
+    private       boolean       startRecordValue;
+    private       boolean       hasInit;
+    private       boolean       inAction;
+    private       boolean       actionValid;
+    private       int           actionSize;
+    private       Double        maxActionValue;
+    private       Double        baseLine;
 
     public ChannelDataProcessor() {
         meanValue = 0d;
         actionSize = 0;
         maxActionValue = 0d;
         cacheQueue = new ArrayDeque<>();
-        initArray = new ArrayList<>();
+        baselineQue = new ArrayDeque<>();
         inAction = false;
         hasInit = false;
         actionValid = false;
@@ -39,22 +37,25 @@ public class ChannelDataProcessor {
     }
 
     public void addData(Double data) {
-        if (!hasInit) {
-            initArray.add(data);
-            if (initArray.size() >= initSize) {
-                hasInit = true;
-                Double sum = 0d;
-                for (Double dou : initArray) {
-                    sum += dou;
-                }
-                baseLine = sum / initArray.size();
-                initArray = null;
+        baselineQue.offerLast(data);
+        if (baselineQue.size() > initSize) {
+            baselineQue.pollFirst();
+            double sum = 0d, max = Double.MIN_VALUE, min = Double.MAX_VALUE;
+            for (Double item : baselineQue) {
+                max = Math.max(max, item);
+                min = Math.min(min, item);
+                sum += item;
             }
-            return;
+            if (max - min <= stableThreshold) {
+                hasInit = true;
+                baseLine = sum / initSize;
+            }
         }
-        data -= baseLine;
-        addDataToQueue(data);
-        addDataToList();
+        if (hasInit) {
+            data -= baseLine;
+            addDataToQueue(data);
+            addDataToList();
+        }
     }
 
     public boolean isInAction() {
@@ -75,8 +76,6 @@ public class ChannelDataProcessor {
         } else {
             meanValue = (meanValue * size + data) / (size + 1);
         }
-        //if (meanValue > 0.12d)
-        //    Log.i(TAG, "addDataToQueue: " + meanValue);
         cacheQueue.addLast(data);
     }
 

@@ -10,10 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
 import com.epic.localmusicnoserver.R;
 import com.epic.localmusicnoserver.activity.BaseActivity;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class BlueToothActivity extends BaseActivity{
+public class BlueToothActivity extends BaseActivity {
 
     final String TAG = "BlueToothActivity";
 
@@ -59,7 +58,7 @@ public class BlueToothActivity extends BaseActivity{
                     break;
                 case EpicParams.MSG_CLIENT_REV_NEW:
                     String newMsgFromServer = msg.obj.toString();
-                    if(dataTransFragment!=null){
+                    if (dataTransFragment != null) {
                         dataTransFragment.updateDataView(newMsgFromServer, EpicParams.REMOTE);
                     }
                     break;
@@ -91,7 +90,7 @@ public class BlueToothActivity extends BaseActivity{
     };
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case EpicParams.MY_PERMISSION_REQUEST_CONSTANT:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
@@ -148,6 +147,13 @@ public class BlueToothActivity extends BaseActivity{
     }
 
     /**
+     * Toast 提示
+     */
+    public void toast(String str) {
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
      * ViewPager 适配器
      */
     public class MyPagerAdapter extends FragmentPagerAdapter {
@@ -170,12 +176,5 @@ public class BlueToothActivity extends BaseActivity{
         public CharSequence getPageTitle(int position) {
             return titleList[position];
         }
-    }
-
-    /**
-     * Toast 提示
-     */
-    public void toast(String str) {
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
 }
