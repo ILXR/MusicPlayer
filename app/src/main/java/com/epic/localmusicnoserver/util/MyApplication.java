@@ -18,6 +18,13 @@ public class MyApplication extends Application {
     private static DBManager     dbManager;
     private static MyApplication Instance;
 
+    public static MyApplication getInstance() {
+        return Instance;
+    }
+
+    public static Context getContext() {
+        return context;
+    }
 
     @Override
     public void onCreate() {
@@ -33,7 +40,6 @@ public class MyApplication extends Application {
         initNightMode();
         dbManager = DBManager.getInstance(this);
     }
-
 
     public void sendBroadCast(String action) {
         Intent intent = new Intent();
@@ -75,13 +81,5 @@ public class MyApplication extends Application {
             intent.putExtra(MusicConstant.KEY_PATH, path);
             sendBroadcast(intent);
         }
-    }
-
-    public static MyApplication getInstance() {
-        return Instance;
-    }
-
-    public static Context getContext() {
-        return context;
     }
 }

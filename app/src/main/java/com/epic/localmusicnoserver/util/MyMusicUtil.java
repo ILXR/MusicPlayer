@@ -33,11 +33,17 @@ public class MyMusicUtil {
     private static final String  TAG          = MyMusicUtil.class.getName();
     private static final Handler handlerThree = new Handler(Looper.getMainLooper());
 
+    public static Toast toast;
+
     // 全局显示Toast
     public static void showToast(final String msg) {
         handlerThree.post(new Runnable() {
             public void run() {
-                Toast.makeText(MyApplication.getContext(), msg, Toast.LENGTH_LONG).show();
+                if (toast != null) {
+                    toast.cancel();
+                }
+                toast = Toast.makeText(MyApplication.getContext(), msg, Toast.LENGTH_LONG);
+                toast.show();
             }
         });
     }
@@ -191,7 +197,7 @@ public class MyMusicUtil {
      * 存储int型
      */
     public static void setIntSharedPreference(String key, int value) {
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", MyApplication.getContext().MODE_PRIVATE);
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(key, value);
         editor.commit();
@@ -201,7 +207,7 @@ public class MyMusicUtil {
      * 存储String型
      */
     public static void setStringSharedPreference(String key, String value) {
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", MyApplication.getContext().MODE_PRIVATE);
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(key, value);
         editor.commit();
@@ -211,7 +217,7 @@ public class MyMusicUtil {
      * 获取int型sharedPreference
      */
     public static int getIntSharedPreference(String key) {
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", MyApplication.getContext().MODE_PRIVATE);
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", Context.MODE_PRIVATE);
         int value;
         if (key.equals(MusicConstant.KEY_CURRENT)) {  //current
             value = pref.getInt(key, 0);
@@ -223,7 +229,7 @@ public class MyMusicUtil {
 
 
     public static String getStringSharedPreference(String key) {
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", MyApplication.getContext().MODE_PRIVATE);
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("music", Context.MODE_PRIVATE);
         String value;
         value = pref.getString(key, null);
         return value;
@@ -371,6 +377,14 @@ public class MyMusicUtil {
         return sharedPreferences.getBoolean("night", false);
     }
 
+    /**
+     * 获取bing图片
+     */
+    public static String getBingSharedPreference() {
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("bing_pic", Context.MODE_PRIVATE);
+        String value = pref.getString("pic", null);
+        return value;
+    }
 
     /**
      * 存储bing图片
@@ -381,27 +395,17 @@ public class MyMusicUtil {
         SharedPreferences只能存储少量数据，大量数据不能使用该方式存储，支持存储的数据类型有booleans, floats, ints, longs, and strings。
         SharedPreferences存储到一个XML文件中的，路径在/data/data/<packagename>/shared_prefs/下
          */
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("bing_pic", MyApplication.getContext().MODE_PRIVATE);
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("bing_pic", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("pic", value);
         editor.commit();
-    }
-
-
-    /**
-     * 获取bing图片
-     */
-    public static String getBingSharedPreference() {
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("bing_pic", MyApplication.getContext().MODE_PRIVATE);
-        String value = pref.getString("pic", null);
-        return value;
     }
 
     /**
      * 判断是否是第一次启动
      */
     public static boolean getIsFirst() {
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("is_first", MyApplication.getContext().MODE_PRIVATE);
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("is_first", Context.MODE_PRIVATE);
         Boolean value = pref.getBoolean("is_first", true);
         return value;
     }
@@ -411,7 +415,7 @@ public class MyMusicUtil {
      * 存储第一次扫描
      */
     public static void setIsFirst(Boolean isFirst) {
-        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("is_first", MyApplication.getContext().MODE_PRIVATE);
+        SharedPreferences pref = MyApplication.getContext().getSharedPreferences("is_first", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean("is_first", isFirst);
         editor.commit();

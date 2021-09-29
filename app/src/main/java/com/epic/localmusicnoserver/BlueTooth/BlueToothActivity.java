@@ -10,13 +10,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
 import com.epic.localmusicnoserver.R;
 import com.epic.localmusicnoserver.activity.BaseActivity;
+import com.epic.localmusicnoserver.fragment.FolderFragment;
 import com.epic.localmusicnoserver.util.EpicParams;
 
 import java.util.ArrayList;
@@ -34,8 +34,8 @@ public class BlueToothActivity extends BaseActivity{
     String[]       titleList    = new String[]{"设备列表", "数据传输"};
     List<Fragment> fragmentList = new ArrayList<>();
 
-    DeviceListFragment deviceListFragment;
-    DataTransFragment  dataTransFragment;
+    FolderFragment.DeviceListFragment deviceListFragment;
+    FolderFragment.DataTransFragment  dataTransFragment;
 
     Handler uiHandler = new Handler() {
         @Override
@@ -137,8 +137,8 @@ public class BlueToothActivity extends BaseActivity{
         tabLayout.addTab(tabLayout.newTab().setText(titleList[0]));
         tabLayout.addTab(tabLayout.newTab().setText(titleList[1]));
 
-        deviceListFragment = new DeviceListFragment();
-        dataTransFragment = new DataTransFragment();
+        deviceListFragment = new FolderFragment.DeviceListFragment();
+        dataTransFragment = new FolderFragment.DataTransFragment();
         fragmentList.add(deviceListFragment);
         fragmentList.add(dataTransFragment);
 
