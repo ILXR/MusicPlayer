@@ -15,20 +15,18 @@ import java.util.List;
 import java.util.Random;
 
 public class BtDataProcessor {
-    private static final String TAG = "BtDataProcessor";
-
-    private static       BtDataProcessor Instance;
-    private static final int             WinSize         = 30;
-    private static final int             DataSize        = 130;
-    private static final Double          actionThreshold = 0.1;
-    private static final int             minStrLength    = 20;
-
-    private       boolean                       startProcess; // 开始处理
-    private       boolean                       startAction; // 开始搜集动作数据
-    private final ArrayDeque<ArrayList<Double>> window; // 滑动窗口
-    private final ArrayList<ArrayList<Double>>  listToSend; // 要发送的数据队列
-    private final StringBuffer                  bufferLast; // String缓存
-    private final Random                        random;
+    private static final String                        TAG             = "BtDataProcessor";
+    private static final int                           WinSize         = 30;
+    private static final int                           DataSize        = 130;
+    private static final Double                        actionThreshold = 0.1;
+    private static final int                           minStrLength    = 20;
+    private static       BtDataProcessor               Instance;
+    private final        ArrayDeque<ArrayList<Double>> window; // 滑动窗口
+    private final        ArrayList<ArrayList<Double>>  listToSend; // 要发送的数据队列
+    private final        StringBuffer                  bufferLast; // String缓存
+    private final        Random                        random;
+    private              boolean                       startProcess; // 开始处理
+    private              boolean                       startAction; // 开始搜集动作数据
 
 
     public BtDataProcessor() {
@@ -71,8 +69,9 @@ public class BtDataProcessor {
                 if (!val.equals(-1.36)) {
                     isInitial = false;
                 }
-                double res = param[0] * Math.pow(val, 4) + param[1] * Math.pow(val, 3) + param[2] * Math.pow(val, 2) + param[3] * val + param[4];
-                result.add((double) Math.round(res * 100) / 100);
+                //double res = param[0] * Math.pow(val, 4) + param[1] * Math.pow(val, 3) + param[2] * Math.pow(val, 2) + param[3] * val + param[4];
+                //result.add((double) Math.round(res * 100) / 100);
+                result.add(val);
             }
             if (isInitial) {
                 return null;
@@ -111,16 +110,11 @@ public class BtDataProcessor {
                 }
                 // 检测异常
                 if (window.size() == WinSize) {
-                    int randIndex = random.nextInt(4);
-                    if (window.getLast().get(randIndex) - window.getFirst().get(randIndex) > actionThreshold) {
-                        while (window.size() > 0) {
-                            listToSend.add(window.getFirst());
-                            window.pop();
-                        }
-                        startAction = true;
-                    } else {
-                        window.pop(); // 弹出第一个
+                    while (window.size() > 0) {
+                        listToSend.add(window.getFirst());
+                        window.pop();
                     }
+                    startAction = true;
                 }
             }
         }
