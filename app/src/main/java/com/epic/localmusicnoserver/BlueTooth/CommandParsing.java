@@ -14,7 +14,7 @@ import java.util.Collections;
 
 public class CommandParsing {
     private static final String         TAG           = "CommandParsing";
-    private static final Double         crabThreshold = 0.45d;
+    private static final Double         crabThreshold = 0.50d;
     private static       CommandParsing INSTANCE;
     private final        AudioManager   mAudioManager;
 
@@ -37,15 +37,18 @@ public class CommandParsing {
         if (max >= crabThreshold)
             return ActionType.Crab;
         Double v1 = maxValues.get(0), v2 = maxValues.get(1), v3 = maxValues.get(2), v4 = maxValues.get(3);
-        if (max <= v3)
-            return ActionType.Touch1;
+        //if (max <= v3)
+        //    return ActionType.Touch1;
         if (max <= v2) {
-            if (Math.abs(v2 - v4) > Math.max(Math.abs(v4 - v1), Math.abs(v4 - v3)) && v4 > Math.max(v1, v3))
-                return ActionType.Touch3;
-            else
-                return ActionType.Touch2;
+            //if (Math.abs(v2 - v4) > Math.max(Math.abs(v4 - v1), Math.abs(v4 - v3)) && v4 > Math.max(v1, v3))
+            //    return ActionType.Touch3;
+            //else
+            //    return ActionType.Touch2;
+            return ActionType.Touch2;
         }
-        return null;
+        if (max <= v4)
+            return ActionType.Touch3;
+        return ActionType.Touch1;
     }
 
     public void act(ActionType type) {

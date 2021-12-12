@@ -7,10 +7,10 @@ public class ChannelDataProcessor {
     private static final String TAG = "ChannelDataProcessor";
 
     // algorithm params
-    private static final Double  startActionThreshold = 0.12d;
+    private static final Double  startActionThreshold = 0.13d;
     private static final Integer minActionSize        = 20;
     private static final int     rollingMeanSize      = 5;
-    private static final int     initSize             = 120;
+    private static final int     initSize             = 100;
     private static final double  stableThreshold      = 0.08d;
 
     private final Deque<Double> cacheQueue;
