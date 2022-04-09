@@ -28,7 +28,7 @@ public class EpicParams {
     }
 
     //public static final String WS_SERVER_URL = "ws://222.20.74.131:50001";
-    public static final String WS_SERVER_URL = "ws://192.168.137.236:50001";
+    public static final String WS_SERVER_URL = "ws://192.168.137.1:50001";
     public static final String WS_HEADER     = "__EPIC__";
 
     // UI CODE
