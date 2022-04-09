@@ -10,33 +10,29 @@ import java.util.List;
 
 
 public class BlueToothDataManager {
+    private static BlueToothDataManager _INSTANCE;
     private final String TAG = "BlueToothDataManager";
-
+    private final int          minValidStrLength   = 20;
+    private final int          minProcessStrLength = 100;
     // capacity data
     private int                             ChannelNum;
     private boolean                         hasInit;
     private ArrayList<ChannelDataProcessor> channelManagers;
-
     // string buffer data
     private       boolean      startProcess;
     private       boolean      anyInAction;
     private       StringBuffer recvBuffer;
-    private final int          minValidStrLength   = 20;
-    private final int          minProcessStrLength = 100;
 
-
-    private static BlueToothDataManager _INSTANCE;
+    public BlueToothDataManager() {
+        ChannelNum = 0;
+        hasInit = false;
+    }
 
     public static synchronized BlueToothDataManager getInstance() {
         if (_INSTANCE == null) {
             _INSTANCE = new BlueToothDataManager();
         }
         return _INSTANCE;
-    }
-
-    public BlueToothDataManager() {
-        ChannelNum = 0;
-        hasInit = false;
     }
 
     public void init(int channelNum) {
@@ -120,13 +116,12 @@ public class BlueToothDataManager {
                         ArrayList<Double> maxValues = new ArrayList<>();
                         for (ChannelDataProcessor channel : channelManagers) {
                             maxValues.add(channel.getMaxActionValue());
-                            //  TODO 不同的数据识别算法
-                            CommandParsing.ActionType type = CommandParsing.getInstance().commandParseOld(maxValues);
-                            //CommandParsing.ActionType type = CommandParsing.getInstance().commandParseNew(maxValues);
-                            if (type != null)
-                                CommandParsing.getInstance().act(type);
-                            Log.i(TAG, "processString: channel max data - " + channel.getMaxActionValue());
                         }
+                        //  TODO 不同的数据识别算法
+                        CommandParsing.ActionType type = CommandParsing.getInstance().commandParse3(maxValues);
+                        if (type != null)
+                            CommandParsing.getInstance().act(type);
+                        Log.i(TAG, "processString: channel max data - " + maxValues.toString());
                     } else {
                         Log.i(TAG, "processString: invalid Data");
                     }

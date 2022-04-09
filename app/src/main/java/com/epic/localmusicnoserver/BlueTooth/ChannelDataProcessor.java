@@ -7,15 +7,18 @@ public class ChannelDataProcessor {
     private static final String TAG = "ChannelDataProcessor";
 
     // algorithm params
-    private static final Double  startActionThreshold = 0.13d;
-    private static final Integer minActionSize        = 20;
+    private static final Double  startActionThreshold = 0.1d;
+    private static final Integer minActionSize        = 40;
     private static final int     rollingMeanSize      = 5;
     private static final int     initSize             = 100;
-    private static final double  stableThreshold      = 0.08d;
+    private static final double  stableThreshold      = 0.03d;
+    private static final int     minActionInterval    = 40;
 
     private final Deque<Double> cacheQueue;
     private final Deque<Double> baselineQue;
     private       Double        meanValue;
+    private       Double        preValue;
+    private       int           actionInterval;
     private       boolean       startRecordValue;
     private       boolean       hasInit;
     private       boolean       inAction;
@@ -27,6 +30,7 @@ public class ChannelDataProcessor {
     public ChannelDataProcessor() {
         meanValue = 0d;
         actionSize = 0;
+        actionInterval = minActionInterval;
         maxActionValue = 0d;
         cacheQueue = new ArrayDeque<>();
         baselineQue = new ArrayDeque<>();
@@ -46,7 +50,7 @@ public class ChannelDataProcessor {
                 min = Math.min(min, item);
                 sum += item;
             }
-            if (max - min <= stableThreshold) {
+            if (max - min <= stableThreshold && !inAction) {
                 hasInit = true;
                 baseLine = sum / initSize;
             }
@@ -67,6 +71,7 @@ public class ChannelDataProcessor {
     }
 
     private void addDataToQueue(Double data) {
+        preValue = meanValue;
         int size = cacheQueue.size();
         if (size == rollingMeanSize) {
             Double front = cacheQueue.pollFirst();
@@ -85,11 +90,15 @@ public class ChannelDataProcessor {
         }
         if (inAction) {
             actionSize++;
+        } else {
+            if(actionInterval<=minActionInterval)
+                actionInterval++;
         }
-        if (meanValue > startActionThreshold && !inAction)
+        if (!inAction && meanValue > startActionThreshold && preValue < meanValue && actionInterval > minActionInterval)
             inAction = true;
-        if (meanValue <= startActionThreshold && inAction) {
+        if (inAction && meanValue <= (maxActionValue + startActionThreshold) / 2) {
             inAction = false;
+            actionInterval = 0;
             if (actionSize >= minActionSize) {
                 actionValid = true;
             }
@@ -106,6 +115,7 @@ public class ChannelDataProcessor {
 
     public void clearState() {
         actionSize = 0;
+        actionInterval = 0;
         maxActionValue = 0d;
         inAction = false;
         actionValid = false;

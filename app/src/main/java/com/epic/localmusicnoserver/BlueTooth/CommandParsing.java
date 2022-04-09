@@ -14,7 +14,7 @@ import java.util.Collections;
 
 public class CommandParsing {
     private static final String         TAG           = "CommandParsing";
-    private static final Double         crabThreshold = 0.50d;
+    private static final Double         crabThreshold = 0.40d;
     private static       CommandParsing INSTANCE;
     private final        AudioManager   mAudioManager;
 
@@ -29,26 +29,21 @@ public class CommandParsing {
         return INSTANCE;
     }
 
-    public ActionType commandParseOld(ArrayList<Double> maxValues) {
-        // Hair1
+    public ActionType commandParse3(ArrayList<Double> maxValues) {
+        // Hair3
         if (maxValues.size() != 4)
             return null;
-        Double max = Collections.max(maxValues);
+        Double max = Collections.max(maxValues), min = Collections.min(maxValues);
         if (max >= crabThreshold)
             return ActionType.Crab;
         Double v1 = maxValues.get(0), v2 = maxValues.get(1), v3 = maxValues.get(2), v4 = maxValues.get(3);
-        //if (max <= v3)
-        //    return ActionType.Touch1;
-        if (max <= v2) {
-            //if (Math.abs(v2 - v4) > Math.max(Math.abs(v4 - v1), Math.abs(v4 - v3)) && v4 > Math.max(v1, v3))
-            //    return ActionType.Touch3;
-            //else
-            //    return ActionType.Touch2;
+        if (max.equals(v1) && min.equals(v4))
+            return ActionType.Touch1;
+        else if (max.equals(v2) && min.equals(v3))
             return ActionType.Touch2;
-        }
-        if (max <= v4)
+        else if (max.equals(v3) && min.equals(v2))
             return ActionType.Touch3;
-        return ActionType.Touch1;
+        return null;
     }
 
     public void act(ActionType type) {
